@@ -1,0 +1,116 @@
+/*** Structure ***/
+.header {
+	float: left;
+	padding: 10px 50px;
+	width: 100%;
+	color: #36b2f2;
+	border-bottom: 1px solid #36b2f2;
+}
+.logo {
+	max-width: 250px;
+	max-height: auto;
+	width: 250px;
+	height: auto;
+	float: left;
+}
+.navbar {
+	border-bottom: 1px solid #36b2f2;
+}
+.navbar-collapse {
+	flex-grow: 0 !important;
+}
+.navbar-nav {
+	flex-direction: row !important;
+
+}
+@media screen and (max-width: 767px) {
+	.navbar-nav {
+		flex-direction: column !important;
+	}
+}
+nav ul li {
+	display: inline-block;
+}
+nav a {
+	display: inline-block;
+	color: #36b2f2 !important;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 10px;
+}
+.nav-item {
+	padding: 5px;
+	font-size: 20px;
+	font-weight: bold;
+	transition: 0.5s;
+	border-radius: 10px;
+}
+.nav-item a:hover {
+	background-color: #36b2f2;
+	color: white !important;
+	text-decoration: none;
+	transition: 0.5s;
+	border-radius: 10px;
+}
+.nav-link {
+	padding: 10px 15px !important;
+}
+
+/*** Extras ***/
+.ex-space {
+	padding-top: 40px;
+}
+@media screen and (max-width: 767px) {
+	.ex-space {
+		padding-top: 20px;
+	}
+}
+.center-align {
+	text-align: center;
+}
+.btn-center {
+	text-align: center;
+}
+
+/*** Login Page ***/
+.center-pills {
+	display: flex;
+}
+.nav-pills {
+	margin: 0 auto;
+}
+.pill-item {
+	padding-bottom: 10px;
+}
+.pill-link {
+	font-size: 18px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #36b2f2;
+	padding: 8px;
+	border: 1px solid #36b2f2;
+}
+.pill-link:hover, .pill-link.active {
+	background: #36b2f2;
+	color: white !important;
+	text-decoration: none;
+}
+#pill-link-one {
+	border-radius: 5px 0 0 5px;
+}
+#pill-link-two {
+	border-radius: 0 5px 5px 0;
+}
+.login-form {
+	margin: 0 auto;
+	padding: 15px;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+.feedback {
+	display: none;
+}
+.needed-feedback {
+	display: inline-block;
+}

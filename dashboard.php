@@ -18,6 +18,7 @@ session_start();
 	include('header.php');
 ?>
 	<main>
+		<h1 class="center-align">Welcome, <?php echo $_SESSION['name']; ?></h1>
 	</main>
 </body>
 </html>
