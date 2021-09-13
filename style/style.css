@@ -107,3 +107,10 @@ nav a {
 	border: 1px solid black;
 	border-radius: 10px;
 }
+
+.feedback {
+	display: none;
+}
+.needed-feedback {
+	display: inline-block;
+}
