@@ -204,14 +204,16 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 							</div>
 							<div class="col-sm">
 								<label class="form-label" for="email">Email</label>
-								<input type="email" id="email" name="email" class="form-control <?php if (!empty($email_err)) echo 'is-invalid'; ?>" placeholder=" School Email Address" autocomplete="off" pattern=".+@.+\.edu$" value="<?php echo $email; ?>" required>
+								<input type="email" id="email" name="email" class="form-control <?php if (!empty($email_err)) echo 'is-invalid'; ?>" placeholder=" School Email Address" autocomplete="off" 
+									pattern=".+@.+\.edu$" value="<?php echo $email; ?>" oninvalid="this.setCustomValidity('Please enter a school email ending in .edu.')" required>
 								<span class="invalid-feedback"><?php if (!empty($email_err)) echo $email_err; ?></span>
 							</div>
 						</div>
 						<div class="row mb-3">
 							<div class="col-sm">
 								<label class="form-label" for="password">Password</label>
-								<input type="password" id="password" name="password" class="form-control <?php if (!empty($password_err)) echo 'is-invalid'; ?>" placeholder="password" autocomplete="off" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+								<input type="password" id="password" name="password" class="form-control <?php if (!empty($password_err)) echo 'is-invalid'; ?>" placeholder="password" autocomplete="off" 
+									pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" oninvalid="this.setCustomValidity('Please enter a password containing each of the following: at least one letter, one number, and one special character.')" required>
 								<span class="invalid-feedback"><?php if (!empty($password_err)) echo $password_err; ?></span>
 							</div>
 							<div class="col-sm">
