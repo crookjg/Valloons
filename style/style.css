@@ -63,6 +63,14 @@ nav a {
 .nav-link {
 	padding: 10px 15px !important;
 }
+.btn-primary {
+	background-color: #36b2f2 !important;
+	border-color: #36b2f2 !important;
+}
+.btn-primary:hover {
+	color: #36b2f2 !important;
+	background-color: white !important;
+}
 
 /*** Extras ***/
 .ex-space {
@@ -121,4 +129,15 @@ nav a {
 }
 .needed-feedback {
 	display: inline-block;
+}
+
+/*** Profile ***/
+@media screen and (min-width: 641px) {
+	.prof-form {
+		width: 50%;
+		margin: 0 auto;
+		border-radius: 10px;
+		border: 1px solid #36b2f2;
+		padding: 10px 5px;
+	}
 }

@@ -33,7 +33,8 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 			$_SESSION = array();
 			$_SESSION['loggedin'] = true;
 			$_SESSION['user_id'] = $user_id;
-			$_SESSION['name'] = $firstname . " " . $lastname;
+			$_SESSION['first_name'] = $firstname;
+			$_SESSION['last_name'] = $lastname;
 			$_SESSION['email'] = $email;
 			$_SESSION['username'] = $username;
 			$_SESSION['ut_id'] = $ut_id;
@@ -191,7 +192,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 								<span class="invalid-feedback"><?php if (!empty($firstname_err)) echo $firstname_err; ?></span>
 							</div>
 							<div class="col-sm">
-								<label class="form-label" for="last-name">First Name</label>
+								<label class="form-label" for="last-name">Last Name</label>
 								<input type="text" id="last-name" name="last-name" class="form-control <?php if (!empty($lastname_err)) echo 'is-invalid'; ?>" placeholder="Last Name" autocomplete="off" value="<?php echo $lastname; ?>" required>
 								<span class="invalid-feedback"><?php if (!empty($lastname_err)) echo $lastname_err; ?></span>
 							</div>
