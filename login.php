@@ -40,10 +40,10 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 			header("location: dashboard.php");
 			exit;
 		} else {
-			$login_err = "Something went wrong. Please try again later.";
+			$login_err = "Incorrect username or password.";
 		}
 	} else {
-		$login_err = "Your form is missing data. Please try again.";
+		$login_err = "Something went wrong. Please try again later.";
 	}
 }
 

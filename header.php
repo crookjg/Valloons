@@ -20,6 +20,7 @@ if ($_SESSION['loggedin'])
 			<img src="media/avatar.png" class="menu-prof" alt="profile">
 		</a>
 		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+			<a class="dropdown-item" href="dashboard.php">Dashboard</a>
 			<a class="dropdown-item" href="profile.php">Profile</a>
 			<a class="dropdown-item" href="logout.php">Logout</a>
 		</div>
