@@ -28,6 +28,11 @@
 		flex-direction: column !important;
 	}
 }
+.menu-prof {
+	width: 25px;
+	max-width: 25px;
+	height: auto;
+}
 nav ul li {
 	display: inline-block;
 }
@@ -37,6 +42,9 @@ nav a {
 	text-align: center;
 	text-decoration: none;
 	border-radius: 10px;
+}
+.dropdown-item {
+	border-radius: 0 !important;
 }
 .nav-item {
 	padding: 5px;

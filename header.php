@@ -13,9 +13,17 @@
 					<a class="nav-link" href="contact.php">Contact</a>
 				</li>
 <?php
-if ($_SESSION['loggedin'] == true)
+if ($_SESSION['loggedin'])
 {
-	echo('<li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>');
+	echo('<li class="nav-item dropdown">
+		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+			<img src="media/avatar.png" class="menu-prof" alt="profile">
+		</a>
+		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+			<a class="dropdown-item" href="profile.php">Profile</a>
+			<a class="dropdown-item" href="logout.php">Logout</a>
+		</div>
+	</li>');
 } else {
 	echo('<li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>');
 }
