@@ -87,7 +87,9 @@ nav a {
 .btn-center {
 	text-align: center;
 }
-
+.table th, .table td {
+	text-align: center;
+}
 /*** Login Page ***/
 .center-pills {
 	display: flex;
@@ -130,6 +132,9 @@ nav a {
 .needed-feedback {
 	display: inline-block;
 }
+#register-btn {
+	margin-top: 32px;
+}
 
 /*** Profile ***/
 @media screen and (min-width: 641px) {
@@ -141,3 +146,34 @@ nav a {
 		padding: 10px 5px;
 	}
 }
+
+/*** Dashboard ***/
+.left-half {
+	width: 50%;
+	max-width: 50%;
+	float: left;
+	padding: 10px;
+}
+.article-head {
+	width: 100%;
+	display: inline-block;
+}
+.ah-left {
+	float: left;
+}
+.ah-right {
+	float: right;
+}
+.right-half {
+	width: 50%;
+	max-width: 50%;
+	float: right;
+	padding: 10px;
+}
+@media screen and (max-width: 767px) {
+	.left-half {
+		width: 100%;
+		display: block;
+	}
+}
+

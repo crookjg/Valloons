@@ -23,11 +23,11 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 	}
 	
 	if (empty($username_err) && empty($password_err) && isset($username) && isset($password)) {
-		$getPwdSQL = "SELECT user_id, first_name, last_name, email, authentication, ut_id FROM user WHERE username=?;";
+		$getPwdSQL = "SELECT user_id, first_name, last_name, email, authentication, verified, ut_id FROM user WHERE username=?;";
 		$get_pwd = $link->prepare($getPwdSQL);
 		$get_pwd->bind_param("s", $username);
 		$get_pwd->execute();
-		$get_pwd->bind_result($user_id, $firstname, $lastname, $email, $authentication, $ut_id);
+		$get_pwd->bind_result($user_id, $firstname, $lastname, $email, $authentication, $verified, $ut_id);
 		
 		if ($get_pwd->fetch() && password_verify($password, $authentication)) {
 			$_SESSION = array();
@@ -38,6 +38,12 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 			$_SESSION['email'] = $email;
 			$_SESSION['username'] = $username;
 			$_SESSION['ut_id'] = $ut_id;
+			if ($_SESSION['ut_id'] == 2)
+			{
+				$_SESSION['verified'] = $verified;
+			} else {
+				$_SESSION['verified'] = NULL;
+			}
 			header("location: dashboard.php");
 			exit;
 		} else {
@@ -49,7 +55,7 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 }
 
 if (!empty($_POST['register']) && isset($_POST['register'])) {
-	$firstname = $lastname = $uname = $email = $password = $usertype = NULL;
+	$firstname = $lastname = $uname = $email = $password = $verified = $usertype = NULL;
 	$firstname_err = $lastname_err = $uname_err = $email_err = $pwd_err = $usertype_err = "";
 
 	if (!empty($_POST['first-name']) && isset($_POST['first-name'])) {
@@ -89,10 +95,16 @@ if (!empty($_POST['register']) && isset($_POST['register'])) {
 		$usertype_err = "Please select an account type.";
 	}
 
+	if (!empty($_POST['url']) && isset($_POST['url'])) {
+		$url = mysqli_real_escape_string($link, $_POST['url']);
+	} else {
+		$url = NULL;
+	}
+
 	if (!empty($firstname) && !empty($lastname) && !empty($uname) && !empty($email) && !empty($password) && !empty($usertype)) {
-		$register_sql = "INSERT INTO user (first_name, last_name, email, username, authentication, ut_id) VALUES (?, ?, ?, ?, ?, ?);";
+		$register_sql = "INSERT INTO user (first_name, last_name, email, username, authentication, teacher_url, ut_id) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		if ($registration = mysqli_prepare($link, $register_sql)) {
-			$registration->bind_param("sssssi", $firstname, $lastname, $email, $uname, $auth_string, $usertype);
+			$registration->bind_param("ssssssi", $firstname, $lastname, $email, $uname, $auth_string, $url, $usertype);
 			if (mysqli_stmt_execute($registration)) {
 				$mail_sent = send_verification_email($email, $firstname, $lastname, $uname, $password);
 				if ($mail_sent) {
@@ -232,14 +244,19 @@ if ($acctType = mysqli_prepare($link, $acctTypeSQL)) {
 		}
 	}
 }
+
 ?>
 								</select>
 								<span class="invalid-feedback"><?php if (!empty($lastname_err)) echo $lastname_err; ?></span>
 							</div>
 						</div>
 						<div class="row mb-3">
+							<div class="col-sm" id="teacher-url">
+								<label class="form-label" for="url">Teacher Homepage</label>
+								<input type="text" name="url" class="form-control">
+							</div>
 							<div class="col-sm btn-center">
-								<input type="submit" class="btn btn-primary" name="register" value="Register">
+								<input type="submit" class="btn btn-primary" id="register-btn" name="register" value="Register">
 							</div>
 						</div>
 					</form>
@@ -248,4 +265,17 @@ if ($acctType = mysqli_prepare($link, $acctTypeSQL)) {
 		</div>
 	</div>			
 </body>
+
+<script>
+$(document).ready(function() {
+	$("select#acct-type").on("change", function() {
+		if ($(this).children(":selected").text() === "Teacher") {
+			$("#teacher-url").show();
+		} else {
+			$("#teacher-url").hide();
+		}
+	});
+});
+</script>
+
 </html>
