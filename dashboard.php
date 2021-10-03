@@ -4,8 +4,8 @@ session_start();
 
 include('config.php');
 
-$gamename = $numq = NULL;
-$game_name_err = $num_q_err = $badInsert = "";
+$gamename = $topic = NULL;
+$game_name_err = $badInsert = "";
 
 if (isset($_POST['create-game']) && !empty($_POST['create-game']))
 {
@@ -15,21 +15,21 @@ if (isset($_POST['create-game']) && !empty($_POST['create-game']))
 		$game_name_err = "The game requires a name.";
 	}
 
-	if (isset($_POST['num-questions']) && !empty($_POST['num-questions'])) {
-		$numq = mysqli_real_escape_string($link, $_POST['num-questions']);
+	if (isset($_POST['topic']) && !empty($_POST['topic'])) {
+		$topic = mysqli_real_escape_string($link, $_POST['topic']);
 	} else {
-		$num_q_err = "Please enter the number of questions the game will include.";
+		$topic = NULL;
 	}
 
-	if (isset($gamename) && isset($numq) && empty($game_name_err) && empty($num_q_err)) {
-		$insertGame = "INSERT INTO game(game_name, num_questions, teacher_id) VALUES(?, ?, ?);";
+	if (isset($gamename) && empty($game_name_err)) {
+		$insertGame = "INSERT INTO game(game_name, topic, teacher_id) VALUES(?, ?, ?);";
 		echo $gamename . ' ' . $numq . ' ' . $_SESSION['user_id'];
 		if ($insertGPrep = mysqli_prepare($link, $insertGame)) {
-			$insertGPrep->bind_param("sii", $gamename, $numq, $_SESSION['user_id']);
+			$insertGPrep->bind_param("ssi", $gamename, $topic, $_SESSION['user_id']);
 			if (mysqli_stmt_execute($insertGPrep)) {
-				$getGameID = "SELECT game_id FROM game WHERE game_name=? AND num_questions=? AND teacher_id=?;";
+				$getGameID = "SELECT game_id FROM game WHERE game_name=? AND topic=? AND teacher_id=?;";
 				if ($getGID = mysqli_prepare($link, $getGameID)) {
-					$getGID->bind_param("sii", $gamename, $numq, $_SESSION['user_id']);
+					$getGID->bind_param("ssi", $gamename, $topic, $_SESSION['user_id']);
 					if (mysqli_stmt_execute($getGID)) {
 						$gameID = mysqli_stmt_get_result($getGID);
 						if (mysqli_num_rows($gameID) == 1)
@@ -81,7 +81,7 @@ function show_games_made() {
 				<thead>
 					<tr>
 						<th class="col">Name</th>
-						<th class="col">Questions</th>
+						<th class="col">Topic</th>
 						<th class="col">Created</th>
 						<th class="col"></th>
 					</tr>
@@ -98,7 +98,7 @@ function show_games_made() {
 				echo ('
 					<tr>
 						<td class="col">' . $row['game_name'] . '</td>
-						<td class="col">' . $row['num_questions'] . '</td>
+						<td class="col">' . $row['topic'] . '</td>
 						<td class="col">' . $row['date_created'] . '</td>
 						<td class="col">
 							<form action="edit-game.php" method="POST">
@@ -142,18 +142,8 @@ function new_game_form() {
 					</span>
 				</div>
 				<div class="col">
-					<label for="num-questions" class="form-label">Number of Questions</label>
-					<input type="number" name="num-questions" class="form-control
-	');
-	if (!empty($num_q_err)) echo 'is-invalid';
-	echo('
-					" id="num-questions" min="0" value="' . $numq . '" required>
-					<span class="invalid-feedback">
-	');
-	if (!empty($num_q_err)) 
-		echo $num_q_err;
-	echo('
-					</span>
+					<label for="topic" class="form-label">Topic</label>
+					<input type="text" name="topic" class="form-control" id="topic" value="' . $topic . '">
 				</div>
 			</div>
 			<input type="submit" class="btn btn-primary" name="create-game" value="Create Game">
