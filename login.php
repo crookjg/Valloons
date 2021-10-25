@@ -233,7 +233,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 								<label class="form-label" for="acct-type">You are a:</label>
 								<select id="acct-type" name="acct-type" class="form-select" required>
 <?php
-$acctTypeSQL = "SELECT ut_id, user_type FROM user_type WHERE user_type <> 'Administrator';";
+$acctTypeSQL = "SELECT ut_id, user_type FROM user_type WHERE user_type <> 'Administrator' AND user_type <> 'Teacher-As-Student';";
 if ($acctType = mysqli_prepare($link, $acctTypeSQL)) {
 	echo 'Prepped.';
 	if (mysqli_stmt_execute($acctType)) {
