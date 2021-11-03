@@ -1,5 +1,3 @@
-import Phaser from 'phaser';
-
 var Quiz = Quiz || {};
 
 const config = {
@@ -10,21 +8,15 @@ const config = {
 	autoCenter: true,
 	physics: {
 		default: 'arcade',
-		arcade: {
-			gravity: { y: 200 }
-		}
-	},
-	scene: {
-		preload: preload,
-		create: create
+		arcade: { debug: true }
 	}
 };
 
 Quiz.game = new Phaser.Game(config);
-Quiz.game.state.add('boot', Quiz.Boot);
-Quiz.game.state.add('intro', Quiz.Intro);
-Quiz.game.state.add('question', Quiz.Question);
-Quiz.game.state.add('answer', Quiz.Answer);
-Quiz.game.state.add('end', Quiz.End);
-Quiz.game.state.start('boot');
+Quiz.game.scene.add('boot', Quiz.Boot);
+Quiz.game.scene.add('intro', Quiz.Intro);
+Quiz.game.scene.add('question', Quiz.Question);
+Quiz.game.scene.add('answer', Quiz.Answer);
+//Quiz.game.scene.add('end', Quiz.End);
+Quiz.game.scene.start('boot');
 

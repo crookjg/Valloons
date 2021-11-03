@@ -3,18 +3,8 @@ Quiz.Boot = function() {}
 
 Quiz.Boot.prototype = {
 	init: function() {
-		this.currentQuestionIndex = 0;
+		this.currQIndex = 0;
 		this.score = 0;
-		this.player;
-		this.cursors;
-		this.darts;
-		this.shootBtn;
-		this.pop;
-		this.field;
-		this.scoreStr = '';
-		this.scoreTxt;
-		this.chances;
-		this.chancesTxt;
 	},
 	preload: function() {
 		// load all images from media folder needed for game
@@ -23,21 +13,42 @@ Quiz.Boot.prototype = {
 		this.load.image('red', '/media/RedBalloon.png');
 		this.load.image('blue', '/media/BlueBalloon.png');
 		this.load.image('green', '/media/GreenBalloon.png');
-		this.load.image('pink', '/media/PinkBalloons.png');
+		this.load.image('pink', '/media/PinkBalloon.png');
 		this.load.image('dart', '/media/CartoonDart.png');
-		this.load.image('next', '/media/NextBtn.png');
-	
-		// load questions from json formatting
-		this.load.json('questions', getQuestions());
+		this.load.audio('pop', ['/media/balloonPop.wav']);
 		
-		// start button to actually start the game
-		this.load.spritesheet('start', 'media/StartBtn.png', 200, 90);
+		this.balloons = ['red', 'blue', 'green', 'pink'];
+		this.num_balloons = 4;
+
+		this.registry.set('currQIndex', this.currQIndex);
+		this.registry.set('score', this.score);
+		this.registry.set('balloons', this.balloons);
+		this.registry.set('num_balloons', this.num_balloons);
+
+		var gameid = $('#gameid').text();
+		var gameData;
+		$.ajax({
+			type: 'post',
+			url: '../get-game-data.php',
+			data: { gameid },
+			async: false,
+			success: function(data) {
+				//console.log(data);
+				gameData = JSON.parse(data);
+				//console.log(gameData);
+			},
+			error: function(jqXHR, textStatus, error) {
+				//console.log(textStatus, error);
+				alert('Game has stopped working. Please go back to the dashboard.');
+			}
+		});
+		
+		// load questions from json formatting
+		this.registry.set('questions', gameData);
 	},
 	create: function() {
-		this.add.image(300, 300, 'bg');
-	
-		//field = game.add.tileSprite(0, 0, 600, 600, 'bg');
-		this.state.start('intro');
+		this.popSound = this.sound.add('pop', {loop: false} );
+		this.scene.start('intro');
 	}
 }
 
