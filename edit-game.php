@@ -387,7 +387,17 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 		<span class="valid-feedback <?php if (!empty($post_sucs)) echo ' show-feedback'; ?>"><?php if (!empty($post_sucs)) echo $post_sucs; ?></span>
 		<span class="invalid-feedback <?php if (!empty($post_err)) echo ' show-feedback'; ?>"><?php if (!empty($post_err)) echo $post_err; ?></span>
 		<article>
-			<h2>Game Information</h2>
+			<div class="row">
+				<div class="col">
+					<h2>Game Information</h2>
+				</div>
+				<div class="col float-end">
+					<form method="POST" action="game.php">
+						<input type="hidden" name="game-id" value="<?php echo $gameID; ?>">
+						<input type="submit" name="play-game" class="btn btn-primary float-end" value="Play">
+					</form>
+				</div>
+			</div>
 			<table class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>

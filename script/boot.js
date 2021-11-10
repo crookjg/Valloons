@@ -48,6 +48,8 @@ Quiz.Boot.prototype = {
 	},
 	create: function() {
 		this.popSound = this.sound.add('pop', {loop: false} );
+		this.registry.set('popSound', this.popSound);
+
 		this.scene.start('intro');
 	}
 }

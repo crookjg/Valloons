@@ -17,6 +17,6 @@ Quiz.game.scene.add('boot', Quiz.Boot);
 Quiz.game.scene.add('intro', Quiz.Intro);
 Quiz.game.scene.add('question', Quiz.Question);
 Quiz.game.scene.add('answer', Quiz.Answer);
-//Quiz.game.scene.add('end', Quiz.End);
+Quiz.game.scene.add('end', Quiz.End);
 Quiz.game.scene.start('boot');
 

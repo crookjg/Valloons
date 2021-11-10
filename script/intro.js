@@ -2,7 +2,9 @@ var Quiz = Quiz || {};
 Quiz.Intro = function() {}
 
 Quiz.Intro.prototype = {
-	preload: function() {},
+	preload: function() {
+		this.registry.set('score', 0);
+	},
 	create: function() {
 		this.add.image(300, 300, 'bg');
 		var intoGroup = this.add.group();
@@ -20,7 +22,7 @@ Quiz.Intro.prototype = {
 			.setStyle({backgroundColor: '#26ee2b', color: '#000', borderRadius: '25px'})
 			.setInteractive({ useHandCursor: true })
 			.on('pointerdown', function() {
-				that.scene.start('question');
+				that.scene.start('question', 0);
 			})
 			.on('pointerover', () => button.setStyle({ backgroundColor: '#f84bf6', color: '#fff', borderRadius: '25px' }))
 			.on('pointerout', () => button.setStyle({ backgroundColor: '#26ee2b', color: '#000', borderRadius: '25px' }))			
