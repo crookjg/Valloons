@@ -4,6 +4,29 @@ session_start();
 
 include ('config.php');
 
+if (!empty($_POST['play-game']) && isset($_POST['play-game'])) {
+	$gameID = $_POST['game-id'];
+
+	$getGameInfo = "SELECT * FROM game WHERE game_id=?;";
+
+	if ($getGD = mysqli_prepare($link, $getGameInfo)) {
+		$getGD->bind_param("i", $gameID);
+		if (mysqli_stmt_execute($getGD))
+		{
+			$gameData = mysqli_stmt_get_result($getGD);
+			while ($row = mysqli_fetch_assoc($gameData))
+			{
+				$gameID = $row['game_id'];
+				$gameName = $row['game_name'];
+				$topic = $row['topic'];
+				$teacherID = $row['teacher_id'];
+				$dateCreated = $row['date_created'];
+				$published = $row['published'];
+			}
+		}
+	}
+}
+
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -14,107 +37,20 @@ include ('config.php');
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser-arcade-physics.min.js"></script>
+<!--	<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser-arcade-physics.min.js"></script>-->
+	<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+
+	<script src="script/boot.js"></script>
+	<script src="script/intro.js"></script>
+	<script src="script/question.js"></script>
 </head>
 <body>
 <?php
 	include('header.php');
 ?>
 	<main class="container">
-<script type="text/JavaScript">
-/*
-	//dart group
-	darts = game.add.group();
-	darts.enableBody = true;
-	dart.physcisBodyType = Phaser.Physics.ARCADE;
-	darts.createMultiple(chances, 'dart');
-	darts.setAll('anchor.x', 0.5);
-	darts.setAll('anchor.y', 1);
-	darts.setAll('outOfBoundsKill', true);
-	darts.setAll('checkWorldBounds', true);
-
-	//player
-	player = game.add.sprite(400, 500, 'dart');
-	player.anchor.setTo(0.5, 0.5);
-	game.physics.enable(player, Phaser.Physics.ARCADE);
-
-	//balloons
-	choices = game.add.group();
-	choices.enableBody = true;
-	choice.physicsBodyType = Phaser.Physics.ARCADE;
-
-	createBalloons();
-
-	//current question
-	questionTxt = game.add.text(10, 10, getCurrQuestion(), {font: '34px Arial', fill: '#000'});
-
-	//scoring
-	scoreStr = 'Score: ';
-	scoreTxt = game.add.text(10, 590, scoreStr + score, {font: '34px Arial', fill: '#000'});
-
-	//chances
-	chancesTxt.add.group();
-	game.add.text(game.world.width - 100, game.world.height - 10, 'Chances Left: ', {font: '34px Arial', fill: '#000'});
-
-	//text
-	stateTxt = game.add.text(game.world.centerX, game.world.centerY, ' ', {font: '60px Arial', fill: '#000'});
-	stateTxt.anchor.setTo(0.5, 0.5);
-	stateTxt.visible = false;
-
-	for (var i = 0; i < chances; i++) {
-		var dart = chances.create(game.world.width - 100 + (30 * i), 60, 'dart');
-		dart.anchor.setTo(0.5, 0.5);
-		dart.angle = 90;
-		dart.alpha = 0.6;
-	}
-
-	//pop balloon
-	pop = game.add.group();
-	pop.createMultiple(choices, 'pop');
-	pop.forEach(popBalloon, this);
-
-	//controls
-	cursors = game.input.keyboard.createCursorKeys();
-	shootBtn = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	 */
-}
-
-function createBalloons() {
-
-}
-
-function popBalloon() {
-
-}
-
-function fall() {
-
-}
-
-function update() {
-
-}
-
-function collision(dart, balloon) {
-
-}
-
-function wrongChoiceFalls(balloon, choice) {
-
-}
-
-function shootDart() {
-
-}
-
-function end() {
-
-}
-
-function restart() {
-
-}
-</script>
+		<div class="d-none" id="gameid"><?php echo $gameID; ?></div>
+		<script src="script/game.js"></script>
 	</main>
 </body>
 </html>
