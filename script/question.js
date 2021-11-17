@@ -56,7 +56,7 @@ Quiz.Question.prototype = {
  		cursors = this.input.keyboard.createCursorKeys();
 
 		// show current question
-		currQ = this.showQuestion(this.registry.get('currQIndex'));
+		this.showQuestion(this.registry.get('currQIndex'));
 		totalQ = this.listQuestions();
 
 		// create score text
@@ -101,10 +101,6 @@ Quiz.Question.prototype = {
 
 		// collide the dart with a balloon
 		this.physics.add.collider(balloons, darts, this.balloonPop, null, this);
-
-//		if (balloons.children.entries.length == 0)
-//			console.log(this.registry.get('currQIndex'));
-//			this.scene.start('answer', this.registry.get('currQIndex'));
 	},
 	// component functions
 	createPlayer: function() {
@@ -219,8 +215,7 @@ Quiz.Question.prototype = {
 
 		// get the current score & number of points the answer was worth
 		var currScore = this.registry.get('score');
-		var worth = this.questionPoints / this.numCorrect;
-
+		let worth = this.questionPoints / this.numCorrect;
 		if (correct == 1 && currScore >= 0 + worth) {
 			currScore -= worth;
 		} else if (correct == 1) {
@@ -229,36 +224,39 @@ Quiz.Question.prototype = {
 
 		this.registry.set('score', parseFloat(currScore.toFixed(1)));
 		this.updateScore(parseFloat(currScore.toFixed(1)));
+		this.checkEnd();
 	},
-	groundHit: function(body) {
-		// pull the game object out of the body.
-		var container = body.gameObject;
-		// check if the answer is correct or not
-		var correct = container.getData('correct');
-		// play sound
-		popSound.play();
-
-		// get current score & number of points answer is worth
-		var currScore = that.registry.get('score');
-		var worth;
-		if (correct == 1)
-			worth = that.questionPoints / that.numCorrect;
-		else
-			worth = that.questionPoints / that.numWrong;
-
-		if (correct == 1)
-			currScore += worth;
-		else if (correct == 0 && currScore >= currScore - worth)
-			currScore -= worth;
-		else
-			currScore = 0;
-
-		that.registry.set('score', parseFloat(currScore.toFixed(1)));
-		that.updateScore(parseFloat(currScore.toFixed(1)));
-
-		// destroy container (balloon & text)
-		//container.destroy();
-		balloons.remove(container, true, true);
+	groundHit: function(body, up, down, left, right) {
+		if (down) {
+			// pull the game object out of the body.
+			var container = body.gameObject;
+			// check if the answer is correct or not
+			var correct = container.getData('correct');
+			// play sound
+			popSound.play();
+	
+			// get current score & number of points answer is worth
+			var currScore = that.registry.get('score');
+			var worth;
+			if (correct == 1)
+				worth = that.questionPoints / that.numCorrect;
+			else
+				worth = that.questionPoints / that.numWrong;
+			if (correct == 1)
+				currScore += worth;
+			else if (correct == 0 && currScore >= 0 + worth)
+				currScore -= worth;
+			else
+				currScore = 0;
+	
+			that.registry.set('score', parseFloat(currScore.toFixed(1)));
+			that.updateScore(parseFloat(currScore.toFixed(1)));
+	
+			// destroy container (balloon & text)
+			//container.destroy();
+			balloons.remove(container, true, true);
+			that.checkEnd();
+		}
 	},
 	// helper functions
 	getTotalScore: function() {
@@ -290,15 +288,45 @@ Quiz.Question.prototype = {
 		var numA = 0;
 		this.numCorrect = 0;
 		this.numWrong = 0;
+		this.correctAns = [];
 		for (var i = 0; i < this.data.questions[questionIndex].choices.length; i++) {
 			if (this.data.questions[questionIndex].choices[i].active == 1)
 				numA++;
-			if (this.data.questions[questionIndex].choices[i].correct == 1)
+			if (this.data.questions[questionIndex].choices[i].correct == 1) {
+				this.correctAns.push(this.data.questions[questionIndex].choices[i].answer);
 				this.numCorrect++;
-			else
+			} else
 				this.numWrong++;
 		}
 		return numA;
+	},
+	checkEnd: function() {
+		if (balloons.children.entries.length == 0) {
+			var waitTime = this.correctAns.length * 5000;
+			var answers = this.showCorrectAnswers();
+
+			this.time.delayedCall(waitTime, this.nextQuestion, [], this);
+		}
+	},
+	showCorrectAnswers: function() {
+		var grp = this.add.group();
+		var ansLen = this.correctAns.length;
+		var startY = 80;
+		var style = { font: '24pt Arial', wordWrap: true, align: 'left', color: '#fff' };
+
+		for (let i = 0; i < this.correctAns.length; i++) {
+			grp.add(this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - startY, this.correctAns[i], style).setOrigin(0.5));
+			startY -= 30;
+		}
+
+		return grp;
+	},
+	nextQuestion: function() {
+		this.registry.set('currQIndex', this.registry.get('currQIndex') + 1);
+		if (this.registry.get('currQIndex') >= totalQ)
+			this.scene.start('ending');
+		else
+			this.scene.start('question');
 	}
 }
 
