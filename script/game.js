@@ -14,6 +14,7 @@ const config = {
 
 Quiz.game = new Phaser.Game(config);
 Quiz.game.scene.add('boot', Quiz.Boot);
+Quiz.game.scene.add('directions', Quiz.Directions);
 Quiz.game.scene.add('intro', Quiz.Intro);
 Quiz.game.scene.add('question', Quiz.Question);
 Quiz.game.scene.add('end', Quiz.End);

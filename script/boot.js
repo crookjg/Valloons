@@ -1,5 +1,5 @@
 var Quiz = Quiz || {};
-Quiz.Boot = function() {}
+Quiz.Boot = function() {};
 
 Quiz.Boot.prototype = {
 	init: function() {
@@ -26,6 +26,8 @@ Quiz.Boot.prototype = {
 		this.registry.set('num_balloons', this.num_balloons);
 
 		var gameid = $('#gameid').text();
+		this.registry.set('gameid', gameid);
+
 		var gameData;
 		$.ajax({
 			type: 'post',
@@ -47,10 +49,11 @@ Quiz.Boot.prototype = {
 		this.registry.set('questions', gameData);
 	},
 	create: function() {
+		// add popping sound to registry
 		this.popSound = this.sound.add('pop', {loop: false} );
 		this.registry.set('popSound', this.popSound);
 
-		this.scene.start('intro');
+		// start directions scene
+		this.scene.start('directions');
 	}
 }
-

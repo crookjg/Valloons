@@ -41,8 +41,10 @@ if (!empty($_POST['play-game']) && isset($_POST['play-game'])) {
 	<script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
 
 	<script src="script/boot.js"></script>
+	<script src="script/directions.js"></script>
 	<script src="script/intro.js"></script>
 	<script src="script/question.js"></script>
+	<script src="script/end.js"></script>
 </head>
 <body>
 <?php
