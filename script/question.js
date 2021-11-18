@@ -163,7 +163,7 @@ Quiz.Question.prototype = {
 		let min = 25;	// min (0 + balloon width w/ padding
 		var rand = Math.floor(Math.random() * min);	// random number between 0 & 25
 		var randX = Math.floor(Math.random() * (max - min) + rand);	// random x
-		var randY = (Math.floor(Math.random() * 100 + 50) * -1);	// random y
+		var randY = (Math.floor(Math.random() * 100 + 25) * -1);	// random y
 	
 		var container = this.add.container(randX, randY);	// create container at random (x, y)
 		var color = this.balloons[Math.floor(Math.random() * this.numBalloons)]; 	// choose random balloon color from 4 possibilities
@@ -189,7 +189,7 @@ Quiz.Question.prototype = {
 		container.body.setCollideWorldBounds(true);
 		container.body.onWorldBounds = true;
 		// set gravity rate so each balloon falls at a different pace
-		container.body.setGravityY(1.5 * Math.random());
+		container.body.setGravityY(2 * Math.random());
 
 		return container;
 	},
@@ -324,7 +324,7 @@ Quiz.Question.prototype = {
 	nextQuestion: function() {
 		this.registry.set('currQIndex', this.registry.get('currQIndex') + 1);
 		if (this.registry.get('currQIndex') >= totalQ)
-			this.scene.start('ending');
+			this.scene.start('end', this.getTotalScore());
 		else
 			this.scene.start('question');
 	}
