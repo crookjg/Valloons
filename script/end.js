@@ -2,6 +2,7 @@ var Quiz = Quiz || {};
 Quiz.End = function() {}
 
 var score;
+var finalScore;
 var gameid;
 var totalQ;
 
@@ -23,7 +24,8 @@ Quiz.End.prototype = {
 			fill: '#fff',
 			wordWrap: false
 		};
-		scoreStr = 'Final Score: ' + score + ' / ' + totalQ;
+		finalScore = (score / totalQ) * 100;
+		scoreStr = 'Final Score: ' + score + ' / ' + totalQ + ' = ' + finalScore;
 		this.finalScore = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 180, scoreStr, style).setOrigin(0.5);
 
 		// Leaderboard text
@@ -40,7 +42,7 @@ Quiz.End.prototype = {
 		$.ajax({
 			type: 'post',
 			url: '../post-results.php',
-			data: { gameid, score },
+			data: { gameid, finalScore },
 			async: false,
 			success: function() {
 				alert('Success.');

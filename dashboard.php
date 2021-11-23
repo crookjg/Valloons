@@ -203,6 +203,104 @@ function not_verified() {
 	echo '<h2 class="center-align">Sorry, but your account has not been verified yet.</h2>';
 }
 
+function show_games_played() {
+	global $link;
+
+	echo ('
+			<div class="row">
+				<h2>Games Played</h2>
+			</div>
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th class="col">Name</th>
+						<th class="col">Topic</th>
+						<th class="col">Score</th>
+						<th class="col">Date Finished</th>
+						<th class="col">Play Again</th>
+					</tr>
+				</thead>
+				<tbody>
+	');
+
+	$getGamesPlayed = "SELECT sg.game_id, sg.score, sg.date_finished, g.game_name, g.topic FROM student_game AS sg JOIN game AS g ON sg.game_id=g.game_id WHERE sg.student_id=? ORDER BY sg.date_finished DESC;";
+	if ($getGP = mysqli_prepare($link, $getGamesPlayed)) {
+		$getGP->bind_param("i", $_SESSION['user_id']);
+		if (mysqli_stmt_execute($getGP)) {
+			$games = mysqli_stmt_get_result($getGP);
+			while ($row = mysqli_fetch_assoc($games)) {
+				echo ('
+					<tr>
+						<td>' . $row['game_name'] . '</td>
+						<td>' . $row['topic'] . '</td>
+						<td>' . $row['score'] . '</td>
+						<td>' . $row['date_finished'] . '</td>
+						<td>
+							<form method="POST" action="game.php">
+								<input type="hidden" name="game-id" value="' . $row['game_id'] . '">
+								<input type="submit" class="btn btn-primary no-mar" name="play-game" value="Play">
+							</form>
+						</td>
+					</tr>
+					');
+			}
+		} else	echo('<tr></tr>');
+	}
+	echo ('
+				</tbody>
+			</table>
+	');
+}
+
+function show_public_games() {
+	global $link;
+
+	echo ('
+			<div class="row">
+				<div class="col">
+					<h2>Playable Games</h2>
+				</div>
+				<div class="col float-right">
+					<input type="text" id="game-search" onkeyup="searchGames()" placeholder="Search for a Game..." class="form-control">
+				</div>
+			</div>
+			<table class="table table-striped table-bordered table-hover" id="games">
+				<thead>
+					<tr>
+						<th class="col">Name</th>
+						<th class="col">Topic</th>
+						<th class="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+	');
+	$getGames = "SELECT * FROM game WHERE published=1 ORDER BY date_created DESC;";
+	if ($getGamesPrep = mysqli_prepare($link, $getGames)) {
+		if (mysqli_stmt_execute($getGamesPrep)) {
+			$games = mysqli_stmt_get_result($getGamesPrep);
+			while ($row = mysqli_fetch_assoc($games)) {
+				echo ('
+					<tr>
+						<td class="col">' . $row['game_name'] . '</td>
+						<td class="col">' . $row['topic'] . '</td>
+						<td class="col">
+							<form action="game.php" method="POST">
+								<input type="hidden" name="game-id" value="' . $row['game_id'] . '">
+								<input type="submit" class="btn btn-primary" name="play-game" value="Play">
+							</form>
+						</td>
+					</tr>
+				');
+			}
+		}
+	}
+	echo ('
+				</tbody>
+			</table>
+	');
+
+}
+
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -220,6 +318,7 @@ function not_verified() {
 ?>
 	<div class="container">
 		<h1 class="center-align">Welcome, <?php echo($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?></h1>
+
 <?php
 if ($_SESSION['ut_id'] == 1) {
 	echo('<article>');
@@ -229,20 +328,68 @@ if ($_SESSION['ut_id'] == 1) {
 
 if (($_SESSION['ut_id'] == 2 && $_SESSION['verified'] == 1) || $_SESSION['ut_id'] == 1)
 {
-	echo('<article class="left-half">');
+	echo('
+		<div class="row ex-space">
+			<div class="col">
+	');
 	show_games_made();
-	echo('</article>');
-	echo('<aside class="right-half">');
+
+	echo('
+			</div>
+			<div class="col">
+	');
 	new_game_form();
-	echo('</aside>');
+	echo('
+			</div>
+		</div>		
+	');
+	echo('
+		<div class="row ex-space">
+			<div class="col">
+	');
+	show_games_played();
+	echo('
+			</div>
+			<div class="col">
+	');
+	show_public_games();
+	echo('
+			</div>
+		</div>
+	');
 } else if ($_SESSION['ut_id'] == 2 && $_SESSION['verified'] == 0) {
 	not_verified();
 } else {
 	echo('<article class="left-half">');
 	show_games_played();
 	echo('</article>');
+	echo('<aside class="right-half">');
+	show_public_games();
+	echo('</aside>');
 }
 ?>
 	</div>
 </body>
+
+<script>
+function searchGames() {
+	var input, filter, table, tr, td, i, j, txtVal;
+	input = document.getElementById('game-search');
+	filter = input.value.toUpperCase();
+	table = document.getElementById('games');
+	tr = table.getElementsByTagName('tr');
+
+	for (i = 0; i < tr.length; i++) {
+		td = tr[i].getElementsByTagName('td');
+		for (j = 0; j < td.length; j++) {
+			if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+				tr[i].style.display = "";
+				break;
+			} else {
+				tr[i].style.display = "none";
+			}
+		}
+	}
+}
+</script>
 </html>
