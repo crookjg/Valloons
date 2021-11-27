@@ -6,12 +6,6 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarToggler">
 			<ul class="navbar-nav ml-auto">
-				<li class="nav-item">
-					<a class="nav-link" href="about.php">About</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="contact.php">Contact</a>
-				</li>
 <?php
 if ($_SESSION['loggedin'])
 {
@@ -26,7 +20,7 @@ if ($_SESSION['loggedin'])
 		</div>
 	</li>');
 } else {
-	echo('<li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>');
+	echo('<li class="nav-item"><a class="nav-link" href="/">Login</a></li>');
 }
 ?>
 			</ul>
