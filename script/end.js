@@ -28,9 +28,12 @@ Quiz.End.prototype = {
 		scoreStr = 'Final Score: ' + score + ' / ' + totalQ + ' = ' + finalScore;
 		this.finalScore = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 180, scoreStr, style).setOrigin(0.5);
 
+		// add exit button to dashboard
+		this.createDashboardButton();
+
 		// Leaderboard text
 		var ldrbrd = this.add.group();
-		var ldrbrdTxt = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 135, 'Leaderboard', style).setOrigin(0.5);
+		var ldrbrdTxt = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 90, 'Leaderboard', style).setOrigin(0.5);
 		// send score to database
 		this.sendScore();
 
@@ -45,10 +48,10 @@ Quiz.End.prototype = {
 			data: { gameid, finalScore },
 			async: false,
 			success: function() {
-				alert('Success.');
+//				alert('Success.');
 			},
 			error: function(jqXHR, textStatus, error) {
-				alert('Could not add results to database.');
+//				alert('Could not add results to database.');
 			}
 		});
 	},
@@ -71,7 +74,7 @@ Quiz.End.prototype = {
 		var ldrbrd = this.add.group();
 
 		let count = 1;
-		let startY = -90;
+		let startY = -45;
 		let style = {
 			font: '24pt Arial',
 			fill: '#fff',
@@ -84,6 +87,21 @@ Quiz.End.prototype = {
 		}
 
 		return ldrbrd;
+	},
+	createDashboardButton: function() {
+		var context = { game:this.game };
+		var that = this;
+		var button = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 135, 'Return to Dashboard')
+			.setOrigin(0.5)
+			.setPadding(10)
+			.setStyle({backgroundColor: '#26ee2b', color: '#000', borderRadius: '25px'})
+			.setInteractive({ useHandCursor: true })
+			.on('pointerdown', function() {
+				location.href="dashboard.php";
+			})
+			.on('pointerover', () => button.setStyle({ backgroundColor: '#f84bf6', color: '#fff', borderRadius: '25px' }))
+			.on('pointerout', () => button.setStyle({ backgroundColor: '#26ee2b', color: '#000', borderRadius: '25px' }));
 	}
+
 	
 }

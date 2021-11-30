@@ -386,7 +386,7 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 	<div class="container ex-space">
 		<span class="valid-feedback <?php if (!empty($post_sucs)) echo ' show-feedback'; ?>"><?php if (!empty($post_sucs)) echo $post_sucs; ?></span>
 		<span class="invalid-feedback <?php if (!empty($post_err)) echo ' show-feedback'; ?>"><?php if (!empty($post_err)) echo $post_err; ?></span>
-		<article>
+		<div>
 			<div class="row">
 				<div class="col">
 					<h2>Game Information</h2>
@@ -436,22 +436,22 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 					<tr>
 				</tbody>
 			</table>
-		</article>
-		<article class="row">
+		</div>
+		<div class="row">
 			<div class="col-md-10">
 				<h2>Questions</h2>
 				<div class="accordion">
 <?php
-$getQuestionsSQL = "SELECT * FROM question WHERE game_id=? ORDER BY question_id ASC;";
-if ($getQ = mysqli_prepare($link, $getQuestionsSQL))
-{
-	$getQ->bind_param("i", $gameID);
-	if (mysqli_stmt_execute($getQ))
+	$getQuestionsSQL = "SELECT * FROM question WHERE game_id=? ORDER BY question_id ASC;";
+	if ($getQ = mysqli_prepare($link, $getQuestionsSQL))
 	{
-		$questions = mysqli_stmt_get_result($getQ);
-		while ($qRow = mysqli_fetch_assoc($questions))
+		$getQ->bind_param("i", $gameID);
+		if (mysqli_stmt_execute($getQ))
 		{
-			echo ('
+			$questions = mysqli_stmt_get_result($getQ);
+			while ($qRow = mysqli_fetch_assoc($questions))
+			{
+				echo ('
 				<div class="accordion-item">
 					<h3 class="accordion-header" id="' . $qRow['question_id'] . '">
 					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-' . $qRow['question_id'] . '" aria-expanded="true" aria-controls="collapse-' . $qRow['question_id'] . '">' . $qRow['question'] . '</button>
@@ -474,11 +474,11 @@ if ($getQ = mysqli_prepare($link, $getQuestionsSQL))
 										<form method="POST">
 											<td><input type="text" name="question" class="form-control" value="' . $qRow['question'] . '" required></td>
 											<td><input type="checkbox" name="active" class="form-check form-check-input"
-			');
-			if ($qRow['active'] == 1) {
-				echo (' checked');
-			}
-			echo ('								></td>
+				');
+				if ($qRow['active'] == 1) {
+					echo (' checked');
+				}
+				echo ('							></td>
 											<td><input type="number" name="points" class="form-control" min="0" value="' . $qRow['points'] . '"></td>
 											<td>
 												<input type="hidden" name="game-id" value="' . $gameID . '">
@@ -503,32 +503,32 @@ if ($getQ = mysqli_prepare($link, $getQuestionsSQL))
 									</tr>
 								</thead>
 								<tbody>
-			');
+				');
 
-			$getAnswersSQL = "SELECT * FROM question_answers WHERE question_id=?;";
-			if ($getA = mysqli_prepare($link, $getAnswersSQL)) {
-				$getA->bind_param("i", $qRow['question_id']);
-				if (mysqli_stmt_execute($getA)) {
-					$answers = mysqli_stmt_get_result($getA);
-					while ($aRow = mysqli_fetch_assoc($answers)) {
-						echo ('
+				$getAnswersSQL = "SELECT * FROM question_answers WHERE question_id=?;";
+				if ($getA = mysqli_prepare($link, $getAnswersSQL)) {
+					$getA->bind_param("i", $qRow['question_id']);
+					if (mysqli_stmt_execute($getA)) {
+						$answers = mysqli_stmt_get_result($getA);
+						while ($aRow = mysqli_fetch_assoc($answers)) {
+							echo ('
 									<form method="POST">
 										<tr>
 											<td><input type="text" id="answer" name="answer" class="form-control');
-						if (!empty($a_err)) {
-							echo ' is-invalid';
-						}
-						echo ('					" value="' . $aRow['answer'] . '"></td>
+							if (!empty($a_err)) {
+								echo ' is-invalid';
+							}
+							echo ('				" value="' . $aRow['answer'] . '"></td>
 											<td><input type="checkbox" name="correct" class="form-check form-check-input"
-						');
-						if ($aRow['correct'] == 1) {
-							echo ' checked';
-						}
-						echo ('></td><td><input type="checkbox" name="active" class="form-check form-check-input"');
-						if ($aRow['active'] == 1) {
-							echo ' checked';
-						}
-						echo ('></td>
+							');
+							if ($aRow['correct'] == 1) {
+								echo ' checked';
+							}
+							echo ('></td><td><input type="checkbox" name="active" class="form-check form-check-input"');
+							if ($aRow['active'] == 1) {
+								echo ' checked';
+							}
+							echo ('></td>
 											<td>
 												<input type="hidden" name="answer-id" value="' . $aRow['answer_id'] . '">
 												<input type="hidden" name="question-id" value="' . $qRow['question_id'] . '">
@@ -538,12 +538,11 @@ if ($getQ = mysqli_prepare($link, $getQuestionsSQL))
 											<td><input type="submit" class="btn btn-primary" name="delete-answer" value="Delete"></td>
 										</tr>
 									</form>
-						');
+							');
+						}
 					}
 				}
-			}
-
-			echo('					</tbody>
+				echo('				</tbody>
 							</table>
 							<h3>Add Answer</h3>
 							<form method="POST">
@@ -570,10 +569,10 @@ if ($getQ = mysqli_prepare($link, $getQuestionsSQL))
 						</div>
 					</div>
 				</div>		
-			');
+				');
+			}
 		}
 	}
-}
 ?>
 				</div>
 			</div>
@@ -607,7 +606,74 @@ if ($getQ = mysqli_prepare($link, $getQuestionsSQL))
 					</div>
 				</form>
 			</div>
-		</article>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<h2>Game Results</h2>
+			</div>
+			<div class="col-md-4">
+				<input type="text" id="email-search" onkeyup="searchEmails()" placeholder="Search By Email..." class="form-control">
+			</div>
+		</div>
+		<div class="row">
+			<table class="table table-striped table-bordered table-hover" id="game-results">
+				<thead>
+					<tr>
+						<th class="col">First Name</th>
+						<th class="col">Last Name</th>
+						<th class="col">Email</th>
+						<th class="col">Score</th>
+						<th class="col">Date Finished</th>
+					</tr>
+				</thead>
+				<tbody>
+<?php
+	$getGameResults = "SELECT sg.score, sg.date_finished, u.first_name, u.last_name, u.email FROM student_game sg JOIN user u ON sg.student_id=u.user_id WHERE sg.game_id=? ORDER BY sg.date_finished DESC;";
+	if ($getGR = mysqli_prepare($link, $getGameResults)) {
+		$getGR->bind_param("i", $gameID);
+		if (mysqli_stmt_execute($getGR)) {
+			$res = mysqli_stmt_get_result($getGR);
+			while ($row = mysqli_fetch_assoc($res)) {
+				echo ('
+					<tr>
+						<td>' . $row['first_name'] . '</td>
+						<td>' . $row['last_name'] . '</td>
+						<td>' . $row['email'] . '</td>
+						<td>' . $row['score'] . '</td>
+						<td>' . $row['date_finished'] . '</td>
+					</tr>
+					');
+			}
+		} else	echo('<tr></tr>');
+	} else echo('<tr>No Data</tr>');
+?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </body>
+
+<script>
+function searchEmails() {
+	var input, filter, table, tr, td, i, j, txtVal;
+	input = document.getElementById('email-search');
+	filter = input.value.toUpperCase();
+	table = document.getElementById('game-results');
+	tr = table.getElementsByTagName('tr');
+
+	for (i = 0; i < tr.length; i++) {
+		td = tr[i].getElementsByTagName('td')[2];
+		if (td) {
+			txtVal = td.textContent || td.innerText;
+			if (txtVal.toUpperCase().indexOf(filter) > -1) {
+				tr[i].style.display = "";
+			} else {
+				tr[i].style.display = "none";
+			}
+		}
+	}
+}
+</script>
+
+
 </html>
