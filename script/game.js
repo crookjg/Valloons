@@ -2,10 +2,10 @@ var Quiz = Quiz || {};
 
 const config = {
 	type: Phaser.AUTO,
-	width: 600,
+	width: 900,
 	height: 600,
 	backgroundColor: '#36b2f2',
-	autoCenter: true,
+	autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
 	physics: {
 		default: 'arcade',
 		arcade: { debug: false }

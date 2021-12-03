@@ -22,6 +22,7 @@ Quiz.Boot.prototype = {
 
 		this.registry.set('currQIndex', this.currQIndex);
 		this.registry.set('score', this.score);
+		this.registry.set('totalAnswers', 0);
 		this.registry.set('balloons', this.balloons);
 		this.registry.set('num_balloons', this.num_balloons);
 

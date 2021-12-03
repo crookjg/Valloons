@@ -6,6 +6,9 @@ include 'config.php';
 
 $login_err = $reg_err = "";
 
+if ($_SESSION['loggedin'] == true)
+	header("location: dashboard.php");
+
 if (!empty($_POST['login']) && isset($_POST['login'])) {
 	$username = $password = NULL;
 	$username_err = $password_err =  "";
@@ -41,6 +44,10 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 			if ($_SESSION['ut_id'] == 2)
 			{
 				$_SESSION['verified'] = $verified;
+				if ($_SESSION['verified'] == 0) {
+					header("location: logout.php");
+					exit;
+				}
 			} else {
 				$_SESSION['verified'] = NULL;
 			}
@@ -114,7 +121,23 @@ if (!empty($_POST['register']) && isset($_POST['register'])) {
 				}
 			} else {
 				$reg_err = "Something went wrong. Please try again.";
-				$uname_err = "That username is taken.";
+				$get_err = "SELECT username, email FROM user;";
+				$info = array('emails' => array(), 'users' => array());
+				if ($getE = mysqli_prepare($link, $get_err)) {
+					if (mysqli_stmt_execute($getE)) {
+						$err_info = mysqli_stmt_get_result($getE);
+						while ($row = mysqli_fetch_assoc($err_info)) {
+							array_push($info['emails'], $row['email']);
+							array_push($info['users'], $row['username']);
+						}
+					}
+				}
+
+				if (in_array($email, $info['emails'])) {
+					$email_err = "The email address is already taken.";
+				} else if (in_array($uname, $info['users'])) {
+					$uname_err = "The username is taken.";
+				}		
 			}
 		} else {
 			$reg_err = "Something went wrong. Please contact the system administrator.";
@@ -215,7 +238,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 								<input type="text" id="username" name="username" class="form-control <?php if (!empty($uname_err)) echo 'is-invalid'; ?>" placeholder="Username" autocomplete="off" value="<?php echo $uname; ?>" required>
 								<span class="invalid-feedback"><?php if (!empty($uname_err)) echo $uname_err; ?></span>
 							</div>
-							<div class="col-sm">
+							<div class="col-sm" id="teacher-email">
 								<label class="form-label" for="email">Email</label>
 								<input type="email" id="email" name="email" class="form-control <?php if (!empty($email_err)) echo 'is-invalid'; ?>" placeholder=" School Email Address" autocomplete="off" 
 									pattern=".+@.+\.edu$" value="<?php echo $email; ?>" oninvalid="this.setCustomValidity('Please enter a school email ending in .edu.')" required>
@@ -233,7 +256,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 								<label class="form-label" for="acct-type">You are a:</label>
 								<select id="acct-type" name="acct-type" class="form-select" required>
 <?php
-$acctTypeSQL = "SELECT ut_id, user_type FROM user_type WHERE user_type <> 'Administrator' AND user_type <> 'Teacher-As-Student';";
+$acctTypeSQL = "SELECT ut_id, user_type FROM user_type WHERE user_type <> 'Administrator';";
 if ($acctType = mysqli_prepare($link, $acctTypeSQL)) {
 	echo 'Prepped.';
 	if (mysqli_stmt_execute($acctType)) {

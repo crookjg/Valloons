@@ -5,7 +5,7 @@ Quiz.Directions.prototype = {
 	preload: function() {},
 	create: function() {
 		// set background
-		this.add.image(300, 300, 'bg');
+		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
 
 		// set directions text group
 		var dirGrp = this.add.group();

@@ -8,7 +8,7 @@ Quiz.Intro.prototype = {
 	},
 	create: function() {
 		// set background
-		this.add.image(300, 300, 'bg');
+		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
 
 		// set text group
 		var introGrp = this.add.group();

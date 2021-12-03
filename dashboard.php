@@ -97,8 +97,8 @@ function show_games_made() {
 			while ($row = mysqli_fetch_assoc($games)) {
 				echo ('
 					<tr>
-						<td class="col">' . $row['game_name'] . '</td>
-						<td class="col">' . $row['topic'] . '</td>
+						<td class="col">' . stripslashes($row['game_name']) . '</td>
+						<td class="col">' . stripslashes($row['topic']) . '</td>
 						<td class="col">' . $row['date_created'] . '</td>
 						<td class="col">
 							<form action="edit-game.php" method="POST">
@@ -217,7 +217,6 @@ function show_games_played() {
 						<th class="col">Topic</th>
 						<th class="col">Score</th>
 						<th class="col">Date Finished</th>
-						<th class="col">Play Again</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -231,16 +230,10 @@ function show_games_played() {
 			while ($row = mysqli_fetch_assoc($games)) {
 				echo ('
 					<tr>
-						<td>' . $row['game_name'] . '</td>
-						<td>' . $row['topic'] . '</td>
+						<td>' . stripslashes($row['game_name']) . '</td>
+						<td>' . stripslashes($row['topic']) . '</td>
 						<td>' . $row['score'] . '</td>
 						<td>' . $row['date_finished'] . '</td>
-						<td>
-							<form method="POST" action="game.php">
-								<input type="hidden" name="game-id" value="' . $row['game_id'] . '">
-								<input type="submit" class="btn btn-primary no-mar" name="play-game" value="Play">
-							</form>
-						</td>
 					</tr>
 					');
 			}
@@ -281,8 +274,8 @@ function show_public_games() {
 			while ($row = mysqli_fetch_assoc($games)) {
 				echo ('
 					<tr>
-						<td class="col">' . $row['game_name'] . '</td>
-						<td class="col">' . $row['topic'] . '</td>
+						<td class="col">' . stripslashes($row['game_name']) . '</td>
+						<td class="col">' . stripslashes($row['topic']) . '</td>
 						<td class="col">
 							<form action="game.php" method="POST">
 								<input type="hidden" name="game-id" value="' . $row['game_id'] . '">
@@ -317,7 +310,7 @@ function show_public_games() {
 	include('header.php');
 ?>
 	<div class="container">
-		<h1 class="center-align">Welcome, <?php echo($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?></h1>
+		<h1 class="center-align">Welcome, <?php echo($_SESSION['username']); ?></h1>
 
 <?php
 if ($_SESSION['ut_id'] == 1) {
@@ -326,46 +319,50 @@ if ($_SESSION['ut_id'] == 1) {
 	echo('</article>');
 }
 
-if (($_SESSION['ut_id'] == 2 && $_SESSION['verified'] == 1) || $_SESSION['ut_id'] == 1)
-{
-	echo('
-		<div class="row ex-space">
-			<div class="col">
-	');
-	show_games_made();
-
-	echo('
+if ($_SESSION['loggedin'] == true) {
+	if (($_SESSION['ut_id'] == 2 && $_SESSION['verified'] == 1) || $_SESSION['ut_id'] == 1)
+	{
+		echo('
+			<div class="row ex-space">
+				<div class="col">
+		');
+		show_games_made();	
+			
+		echo('
+				</div>
+				<div class="col">
+		');
+		new_game_form();
+		echo('
+				</div>
+			</div>		
+		');	
+		echo('
+			<div class="row ex-space">
+				<div class="col">
+		');
+		show_games_played();
+		echo('
+				</div>
+				<div class="col">
+		');
+		show_public_games();
+		echo('
+				</div>
 			</div>
-			<div class="col">
-	');
-	new_game_form();
-	echo('
-			</div>
-		</div>		
-	');
-	echo('
-		<div class="row ex-space">
-			<div class="col">
-	');
-	show_games_played();
-	echo('
-			</div>
-			<div class="col">
-	');
-	show_public_games();
-	echo('
-			</div>
-		</div>
-	');
-} else if ($_SESSION['ut_id'] == 2 && $_SESSION['verified'] == 0) {
-	not_verified();
+		');
+	} else if ($_SESSION['ut_id'] == 2 && $_SESSION['verified'] == 0) {
+		not_verified();
+	} else {
+		echo('<article class="left-half">');
+		show_games_played();
+		echo('</article>');
+		echo('<aside class="right-half">');
+		show_public_games();
+		echo('</aside>');
+	}
 } else {
-	echo('<article class="left-half">');
-	show_games_played();
-	echo('</article>');
-	echo('<aside class="right-half">');
-	show_public_games();
-	echo('</aside>');
+	header("location: index.php");
 }
 ?>
 	</div>

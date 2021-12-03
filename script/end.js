@@ -4,19 +4,15 @@ Quiz.End = function() {}
 var score;
 var finalScore;
 var gameid;
-var totalQ;
 
 Quiz.End.prototype = {
-	init: function(total) {
-		totalQ = total;
-	},	
 	preload: function() {
 		score = this.registry.get('score');
 		gameid = this.registry.get('gameid');
 	},
 	create: function() {
 		// set background
-		this.add.image(300, 300, 'bg');
+		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
 	
 		// set text for final score
 		let style = {
@@ -24,8 +20,9 @@ Quiz.End.prototype = {
 			fill: '#fff',
 			wordWrap: false
 		};
-		finalScore = (score / totalQ) * 100;
-		scoreStr = 'Final Score: ' + score + ' / ' + totalQ + ' = ' + finalScore;
+		let totalAns = this.registry.get('totalAnswers');
+		finalScore = ((score / totalAns) * 100).toFixed(0);
+		scoreStr = 'Final Score: ' + score + ' / ' + totalAns + ' = ' + finalScore;
 		this.finalScore = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 180, scoreStr, style).setOrigin(0.5);
 
 		// add exit button to dashboard
@@ -84,6 +81,8 @@ Quiz.End.prototype = {
 		for (let i = 0; i < leaderboardData['leaders'].length; i++) {
 			let place = count + '. ' + leaderboardData['leaders'][i];
 			ldrbrd.add(this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + startY, place, style).setOrigin(0.5));
+			startY += 45;
+			count++;
 		}
 
 		return ldrbrd;

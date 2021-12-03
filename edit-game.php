@@ -35,8 +35,8 @@ function getGameData() {
 			while ($row = mysqli_fetch_assoc($gameData))
 			{
 				$gameID = $row['game_id'];
-				$gameName = $row['game_name'];
-				$topic = $row['topic'];
+				$gameName = stripslashes($row['game_name']);
+				$topic = stripslashes($row['topic']);
 				$teacherID = $row['teacher_id'];
 				$dateCreated = $row['date_created'];
 				$published = $row['published'];
@@ -103,22 +103,16 @@ if (isset($_POST['update-question']) && !empty($_POST['update-question'])) {
 		$q_err = "A question is required.";
 	}
 
-	if (isset($_POST['points']) && !empty($_POST['points'])) {
-		$points = $_POST['points'];
-	} else {
-		$points = 1;
-	}
-
 	if (isset($_POST['active']) && !empty($_POST['active'])) {
 		$q_active = 1;
 	} else {
 		$q_active = 0;
 	}
 
-	$updateQuestion = "UPDATE question SET question=?, points=?, active=? WHERE question_id=?;";
-	if (isset($question) && isset($questionID) && isset($points) && isset($q_active) && empty($q_err)) {
+	$updateQuestion = "UPDATE question SET question=?, active=? WHERE question_id=?;";
+	if (isset($question) && isset($questionID) && isset($q_active) && empty($q_err)) {
 		if ($uQ = mysqli_prepare($link, $updateQuestion)) {
-			$uQ->bind_param("siii", $question, $points, $q_active, $questionID);
+			$uQ->bind_param("sii", $question, $q_active, $questionID);
 			if (mysqli_stmt_execute($uQ)) {
 				$post_sucs = "Question successfully updated.";
 			} else {
@@ -152,10 +146,12 @@ if (isset($_POST['update-answer']) && !empty($_POST['update-answer'])) {
 		$post_err = "Your form is missing data. Please try again later.";
 	}
 
-	if (isset($_POST['answer']) && !empty($_POST['answer'])) {
+	if (strcmp($_POST['answer'], '0') == 0 && empty($_POST['answer'])) {
+		$answer = addslashes($_POST['answer']);
+	} else if (isset($_POST['answer']) && !empty($_POST['answer'])) {
 		$answer = mysqli_real_escape_string($link, $_POST['answer']);
 	} else {
-		$a_err = "An answer is required.";
+		$a_err = "Must provide an answer.";
 	}
 
 	if (isset($_POST['correct']) && !empty($_POST['correct'])) {
@@ -209,16 +205,10 @@ if (isset($_POST['add-question']) && !empty($_POST['add-question'])) {
 		$q_active = 0;
 	}
 
-	if (isset($_POST['points']) && !empty($_POST['points'])) {
-		$q_points = $_POST['points'];
-	} else {
-		$q_points = 1;
-	}
-
-	$addQuestion = "INSERT INTO question(game_id, question, active, points) VALUES (?, ?, ?, ?);";
-	if (isset($gameID) && isset($question) && isset($q_active) && isset($q_points) && empty($post_err) && empty($q_err)) {
+	$addQuestion = "INSERT INTO question(game_id, question, active) VALUES (?, ?, ?, ?);";
+	if (isset($gameID) && isset($question) && isset($q_active) && empty($post_err) && empty($q_err)) {
 		if ($aQ = mysqli_prepare($link, $addQuestion)) {
-			$aQ->bind_param("isii", $gameID, $question, $q_active, $q_points);
+			$aQ->bind_param("isi", $gameID, $question, $q_active);
 			if (mysqli_stmt_execute($aQ)) {
 				$post_sucs = "Question added to the game.";
 			} else {
@@ -246,7 +236,9 @@ if (isset($_POST['create-answer']) && !empty($_POST['create-answer'])) {
 		$post_err = "Your form is missing data. Please try again later.";
 	}
 
-	if (isset($_POST['answer']) && !empty($_POST['answer'])) {
+	if (strcmp($_POST['answer'], '0') == 0 && empty($_POST['answer'])) {
+		$answer = addslashes($_POST['answer']);
+	} else if (isset($_POST['answer']) && !empty($_POST['answer'])) {
 		$answer = mysqli_real_escape_string($link, $_POST['answer']);
 	} else {
 		$a_err = "Must provide an answer.";
@@ -437,7 +429,8 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 				</tbody>
 			</table>
 		</div>
-		<div class="row">
+		<hr>
+		<div class="row ex-space">
 			<div class="col-md-10">
 				<h2>Questions</h2>
 				<div class="accordion">
@@ -464,7 +457,6 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 									<tr>
 										<th class="col">Question</th>
 										<th class="col">Active?</th>
-										<th class="col">Points</th>
 										<th class="col"></th>
 										<th class="col"></th>
 									</tr>
@@ -472,14 +464,13 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 								<tbody>
 									<tr>
 										<form method="POST">
-											<td><input type="text" name="question" class="form-control" value="' . $qRow['question'] . '" required></td>
+											<td><input type="text" name="question" class="form-control" value="' . stripslashes($qRow['question']) . '" required></td>
 											<td><input type="checkbox" name="active" class="form-check form-check-input"
 				');
 				if ($qRow['active'] == 1) {
 					echo (' checked');
 				}
 				echo ('							></td>
-											<td><input type="number" name="points" class="form-control" min="0" value="' . $qRow['points'] . '"></td>
 											<td>
 												<input type="hidden" name="game-id" value="' . $gameID . '">
 												<input type="hidden" name="question-id" value="' . $qRow['question_id'] . '">
@@ -518,7 +509,7 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 							if (!empty($a_err)) {
 								echo ' is-invalid';
 							}
-							echo ('				" value="' . $aRow['answer'] . '"></td>
+							echo ('				" value="' . stripslashes($aRow['answer']) . '"></td>
 											<td><input type="checkbox" name="correct" class="form-check form-check-input"
 							');
 							if ($aRow['correct'] == 1) {
@@ -594,12 +585,6 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 					</div>
 					<div class="row mb-3">
 						<div class="col">
-							<label for="points">Points</label>
-							<input type="number" name="points" class="form-control" min="0">
-						</div>
-					</div>
-					<div class="row mb-3">
-						<div class="col">
 							<input type="hidden" name="game-id" value="<?php echo $gameID; ?>">
 							<input type="submit" name="add-question" class="btn btn-primary" value="Add">
 						</div>
@@ -607,7 +592,8 @@ if (isset($_POST['delete-answer']) && !empty($_POST['delete-answer'])) {
 				</form>
 			</div>
 		</div>
-		<div class="row">
+		<hr>
+		<div class="row ex-space">
 			<div class="col-md-8">
 				<h2>Game Results</h2>
 			</div>

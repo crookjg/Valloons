@@ -34,10 +34,10 @@ Quiz.Question.prototype = {
 	},
 	create: function() {
 		// set background
-		this.add.image(300, 300, 'bg');
+		this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
 
 		// set world bounds
-		this.physics.world.setBounds(0, this.cameras.main.centerY + 200, 600, 100, true, true, false, true);
+		this.physics.world.setBounds(0, this.cameras.main.centerY + 200, 900, 100, true, true, false, true);
 				
 		// create falling balloons group
 		balloons = this.add.group();
@@ -116,7 +116,7 @@ Quiz.Question.prototype = {
 			wordWrap: false,
 			align: 'right'
 		};
-		var total = this.getTotalScore();
+		var total = this.registry.get('totalAnswers');
 		scoreStr = 'Score: ' + this.registry.get('score') + ' / ' + total;
 		scoreTxt = this.add.text(0, this.cameras.main.height - 30, scoreStr, style);
 
@@ -128,7 +128,7 @@ Quiz.Question.prototype = {
 			wordWrap: false,
 			align: 'right'
 		};
-		var total = this.getTotalScore();
+		var total = this.registry.get('totalAnswers');
 		scoreTxt.text = 'Score: ' + newScore + ' / ' + total;
 	},
 	showExitButton: function() {
@@ -156,14 +156,14 @@ Quiz.Question.prototype = {
 		}).setOrigin(0.5);
 	
 		this.numAns = this.getNumAnswers(currIndex);
-		this.questionPoints = this.data.questions[currIndex].points;
+		let totAns = this.registry.get('totalAnswers');
+		this.registry.set('totalAnswers', this.numAns + totAns);
 	},
 	createAnswer: function(index) {
-		let max = 565;	// max (game width - balloon width w/ padding)
-		let min = 25;	// min (0 + balloon width w/ padding
-		var rand = Math.floor(Math.random() * min);	// random number between 0 & 25
-		var randX = Math.floor(Math.random() * (max - min) + rand);	// random x
-		var randY = (Math.floor(Math.random() * 100 + 25) * -1);	// random y
+		let max = 840;	// max (game width - balloon width w/ padding)
+		let min = 30;	// min (0 + balloon width w/ padding
+		var randX = Math.floor(Math.random() * max + min);	// random x
+		var randY = (Math.floor(Math.random() * 105 + 25) * -1);	// random y
 	
 		var container = this.add.container(randX, randY);	// create container at random (x, y)
 		var color = this.balloons[Math.floor(Math.random() * this.numBalloons)]; 	// choose random balloon color from 4 possibilities
@@ -213,17 +213,17 @@ Quiz.Question.prototype = {
 		// play the popping sound
 		popSound.play();
 
-		// get the current score & number of points the answer was worth
+		// get the current score
 		var currScore = this.registry.get('score');
-		let worth = this.questionPoints / this.numCorrect;
-		if (correct == 1 && currScore >= 0 + worth) {
-			currScore -= worth;
-		} else if (correct == 1) {
-			currScore = 0;
+		
+		if (correct == 1) {
+			currScore -= 1;
+		} else {
+			currScore += 1;
 		}
 
-		this.registry.set('score', parseFloat(currScore.toFixed(1)));
-		this.updateScore(parseFloat(currScore.toFixed(1)));
+		this.registry.set('score', currScore);
+		this.updateScore(currScore);
 		this.checkEnd();
 	},
 	groundHit: function(body, up, down, left, right) {
@@ -237,20 +237,14 @@ Quiz.Question.prototype = {
 	
 			// get current score & number of points answer is worth
 			var currScore = that.registry.get('score');
-			var worth;
+
 			if (correct == 1)
-				worth = that.questionPoints / that.numCorrect;
+				currScore += 1;
 			else
-				worth = that.questionPoints / that.numWrong;
-			if (correct == 1)
-				currScore += worth;
-			else if (correct == 0 && currScore >= 0 + worth)
-				currScore -= worth;
-			else
-				currScore = 0;
+				currScore -= 1;;
 	
-			that.registry.set('score', parseFloat(currScore.toFixed(1)));
-			that.updateScore(parseFloat(currScore.toFixed(1)));
+			that.registry.set('score', currScore);
+			that.updateScore(currScore);
 	
 			// destroy container (balloon & text)
 			//container.destroy();
@@ -259,14 +253,6 @@ Quiz.Question.prototype = {
 		}
 	},
 	// helper functions
-	getTotalScore: function() {
-		var total = 0;
-		for (var i = 0; i < this.data.questions.length; i++) {
-			if (this.data.questions[i].active == 1)
-				total += this.data.questions[i].points;
-		}
-		return total;
-	},
 	getQuestion: function(questionIndex) {
 		if (this.data.questions[questionIndex].active == 1) {
 			return this.data.questions[questionIndex].question;
@@ -286,23 +272,19 @@ Quiz.Question.prototype = {
 	},
 	getNumAnswers: function(questionIndex) {
 		var numA = 0;
-		this.numCorrect = 0;
-		this.numWrong = 0;
 		this.correctAns = [];
 		for (var i = 0; i < this.data.questions[questionIndex].choices.length; i++) {
 			if (this.data.questions[questionIndex].choices[i].active == 1)
 				numA++;
 			if (this.data.questions[questionIndex].choices[i].correct == 1) {
 				this.correctAns.push(this.data.questions[questionIndex].choices[i].answer);
-				this.numCorrect++;
-			} else
-				this.numWrong++;
+			}
 		}
 		return numA;
 	},
 	checkEnd: function() {
 		if (balloons.children.entries.length == 0) {
-			var waitTime = this.correctAns.length * 5000;
+			var waitTime = this.correctAns.length * 2000;
 			var answers = this.showCorrectAnswers();
 
 			this.time.delayedCall(waitTime, this.nextQuestion, [], this);
@@ -324,7 +306,7 @@ Quiz.Question.prototype = {
 	nextQuestion: function() {
 		this.registry.set('currQIndex', this.registry.get('currQIndex') + 1);
 		if (this.registry.get('currQIndex') >= totalQ)
-			this.scene.start('end', this.getTotalScore());
+			this.scene.start('end');
 		else
 			this.scene.start('question');
 	}

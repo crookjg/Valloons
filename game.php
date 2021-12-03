@@ -17,8 +17,8 @@ if (!empty($_POST['play-game']) && isset($_POST['play-game'])) {
 			while ($row = mysqli_fetch_assoc($gameData))
 			{
 				$gameID = $row['game_id'];
-				$gameName = $row['game_name'];
-				$topic = $row['topic'];
+				$gameName = stripslashes($row['game_name']);
+				$topic = stripslashes($row['topic']);
 				$teacherID = $row['teacher_id'];
 				$dateCreated = $row['date_created'];
 				$published = $row['published'];
@@ -50,8 +50,9 @@ if (!empty($_POST['play-game']) && isset($_POST['play-game'])) {
 <?php
 	include('header.php');
 ?>
-	<main class="container">
+	<main class="container ex-space">
 		<div class="d-none" id="gameid"><?php echo $gameID; ?></div>
+		<h2 class="center-align"><?php echo $gameName; ?></h2>
 		<script src="script/game.js"></script>
 	</main>
 </body>
