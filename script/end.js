@@ -2,7 +2,6 @@ var Quiz = Quiz || {};
 Quiz.End = function() {}
 
 var score;
-var finalScore;
 var gameid;
 
 Quiz.End.prototype = {
@@ -20,9 +19,7 @@ Quiz.End.prototype = {
 			fill: '#fff',
 			wordWrap: false
 		};
-		let totalAns = this.registry.get('totalAnswers');
-		finalScore = ((score / totalAns) * 100).toFixed(0);
-		scoreStr = 'Final Score: ' + score + ' / ' + totalAns + ' = ' + finalScore;
+		scoreStr = 'Final Score: ' + score;
 		this.finalScore = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 180, scoreStr, style).setOrigin(0.5);
 
 		// add exit button to dashboard
@@ -42,7 +39,7 @@ Quiz.End.prototype = {
 		$.ajax({
 			type: 'post',
 			url: '../post-results.php',
-			data: { gameid, finalScore },
+			data: { gameid, score },
 			async: false,
 			success: function() {
 //				alert('Success.');
@@ -77,9 +74,11 @@ Quiz.End.prototype = {
 			fill: '#fff',
 			wordWrap: false
 		};
-
-		for (let i = 0; i < leaderboardData['leaders'].length; i++) {
-			let place = count + '. ' + leaderboardData['leaders'][i];
+		
+		var leadLen = (leaderboardData.length > 8) ? 8 : leaderboardData.length;
+		
+		for (let i = 0; i < leadLen; i++) {
+			let place = count + '. ' + leaderboardData[i];
 			ldrbrd.add(this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + startY, place, style).setOrigin(0.5));
 			startY += 45;
 			count++;

@@ -2,6 +2,7 @@ var Quiz = Quiz || {};
 Quiz.Question = function() {}
 
 var popSound;
+var dingSound;
 var player;
 var cursors;
 var balloons;
@@ -31,6 +32,7 @@ Quiz.Question.prototype = {
 
 		// balloon popping sound
 		popSound = this.registry.get('popSound');
+		dingSound = this.registry.get('dingSound');
 	},
 	create: function() {
 		// set background
@@ -86,9 +88,9 @@ Quiz.Question.prototype = {
 
 		// capture player movement
 		if (cursors.left.isDown) {
-			player.setVelocityX(-160);
+			player.setVelocityX(-175);
 		} else if (cursors.right.isDown) {
-			player.setVelocityX(160);
+			player.setVelocityX(175);
 		} else {
 			player.setVelocityX(0);
 		}
@@ -116,8 +118,7 @@ Quiz.Question.prototype = {
 			wordWrap: false,
 			align: 'right'
 		};
-		var total = this.registry.get('totalAnswers');
-		scoreStr = 'Score: ' + this.registry.get('score') + ' / ' + total;
+		scoreStr = 'Score: ' + this.registry.get('score');
 		scoreTxt = this.add.text(0, this.cameras.main.height - 30, scoreStr, style);
 
 	},
@@ -128,8 +129,7 @@ Quiz.Question.prototype = {
 			wordWrap: false,
 			align: 'right'
 		};
-		var total = this.registry.get('totalAnswers');
-		scoreTxt.text = 'Score: ' + newScore + ' / ' + total;
+		scoreTxt.text = 'Score: ' + newScore;
 	},
 	showExitButton: function() {
 		var context = { game:this.game };
@@ -156,14 +156,12 @@ Quiz.Question.prototype = {
 		}).setOrigin(0.5);
 	
 		this.numAns = this.getNumAnswers(currIndex);
-		let totAns = this.registry.get('totalAnswers');
-		this.registry.set('totalAnswers', this.numAns + totAns);
 	},
 	createAnswer: function(index) {
 		let max = 840;	// max (game width - balloon width w/ padding)
-		let min = 30;	// min (0 + balloon width w/ padding
+		let min = 20;	// min (0 + balloon width w/ padding
 		var randX = Math.floor(Math.random() * max + min);	// random x
-		var randY = (Math.floor(Math.random() * 105 + 25) * -1);	// random y
+		var randY = (Math.floor(Math.random() * 150 + 50) * -1);	// random y
 	
 		var container = this.add.container(randX, randY);	// create container at random (x, y)
 		var color = this.balloons[Math.floor(Math.random() * this.numBalloons)]; 	// choose random balloon color from 4 possibilities
@@ -189,7 +187,7 @@ Quiz.Question.prototype = {
 		container.body.setCollideWorldBounds(true);
 		container.body.onWorldBounds = true;
 		// set gravity rate so each balloon falls at a different pace
-		container.body.setGravityY(5 * Math.random() + 1);
+		container.body.setGravityY(3 * Math.random() + 1);
 
 		return container;
 	},
@@ -210,15 +208,14 @@ Quiz.Question.prototype = {
 		// pop the balloon & the dart
 		balloons.remove(balloon, true, true);
 		dart.destroy();
-		// play the popping sound
-		popSound.play();
-
 		// get the current score
 		var currScore = this.registry.get('score');
 		
 		if (correct == 1) {
+			popSound.play();
 			currScore -= 1;
 		} else {
+			dingSound.play();
 			currScore += 1;
 		}
 
@@ -231,17 +228,17 @@ Quiz.Question.prototype = {
 			// pull the game object out of the body.
 			var container = body.gameObject;
 			// check if the answer is correct or not
-			var correct = container.getData('correct');
-			// play sound
-			popSound.play();
-	
+			var correct = container.getData('correct');	
 			// get current score & number of points answer is worth
 			var currScore = that.registry.get('score');
 
-			if (correct == 1)
+			if (correct == 1) {
+				dingSound.play();
 				currScore += 1;
-			else
-				currScore -= 1;;
+			} else {
+				popSound.play();
+				currScore -= 1;
+			}
 	
 			that.registry.set('score', currScore);
 			that.updateScore(currScore);
@@ -284,8 +281,8 @@ Quiz.Question.prototype = {
 	},
 	checkEnd: function() {
 		if (balloons.children.entries.length == 0) {
-			var waitTime = this.correctAns.length * 2000;
-			var answers = this.showCorrectAnswers();
+			var waitTime = 2000;
+			//var answers = this.showCorrectAnswers();
 
 			this.time.delayedCall(waitTime, this.nextQuestion, [], this);
 		}

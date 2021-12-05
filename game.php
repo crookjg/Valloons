@@ -4,6 +4,9 @@ session_start();
 
 include ('config.php');
 
+if ($_SESSION['loggedin'] != true)
+	header("location: index.php");
+
 if (!empty($_POST['play-game']) && isset($_POST['play-game'])) {
 	$gameID = $_POST['game-id'];
 

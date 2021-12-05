@@ -5,7 +5,7 @@ session_start();
 include('config.php');
 
 $gameID = isset($_POST['gameid']) ? $_POST['gameid'] : NULL;
-$score = isset($_POST['finalScore']) ? $_POST['finalScore'] : NULL;
+$score = isset($_POST['score']) ? $_POST['score'] : NULL;
 
 if ($gameID != NULL && $score != NULL) {
 	$addScore = "INSERT INTO student_game (student_id, game_id, score) VALUES (?, ?, ?);";

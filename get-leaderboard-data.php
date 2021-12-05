@@ -8,7 +8,7 @@ $gameID = isset($_POST['gameid']) ? $_POST['gameid'] : NULL;
 
 if ($gameID != NULL) {
 	$json = array("leaders" => array());
-	$getLeadersSQL = "SELECT p.username FROM student_game as s JOIN user as p ON s.student_id=p.user_id WHERE s.game_id=? ORDER BY s.score DESC LIMIT 8;";
+	$getLeadersSQL = "SELECT p.username FROM student_game as s JOIN user as p ON s.student_id=p.user_id WHERE s.game_id=? ORDER BY s.score DESC;";
 	
 	if ($getL = mysqli_prepare($link, $getLeadersSQL))
 	{
@@ -22,7 +22,8 @@ if ($gameID != NULL) {
 			}
 		}
 	}
-	echo json_encode($json);
+	$leaders = array_values(array_unique($json['leaders'], SORT_REGULAR));
+	echo json_encode($leaders);
 } else {
 	$json = array(
 		'message' => 'No Game ID'
