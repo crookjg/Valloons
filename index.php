@@ -10,13 +10,13 @@ if ($_SESSION['loggedin'] == true)
 	header("location: dashboard.php");
 
 if (!empty($_POST['login']) && isset($_POST['login'])) {
-	$username = $password = NULL;
+	$user = $password = NULL;
 	$username_err = $password_err =  "";
 	
-	if (!empty($_POST['username']) && isset($_POST['username'])) {
-		$username = mysqli_real_escape_string($link, $_POST['username']);
+	if (!empty($_POST['user']) && isset($_POST['user'])) {
+		$user = mysqli_real_escape_string($link, $_POST['user']);
 	} else {
-		$username_err = "Please enter a valid username.";
+		$username_err = "Please enter a valid username or email.";
 	}
 	
 	if (!empty($_POST['auth_string']) && isset($_POST['auth_string'])) {
@@ -25,12 +25,12 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 		$password_err = "Please enter a password.";
 	}
 	
-	if (empty($username_err) && empty($password_err) && isset($username) && isset($password)) {
-		$getPwdSQL = "SELECT user_id, first_name, last_name, email, authentication, verified, ut_id FROM user WHERE username=?;";
+	if (empty($username_err) && empty($password_err) && isset($user) && isset($password)) {
+		$getPwdSQL = "SELECT user_id, first_name, last_name, username, email, authentication, verified, ut_id FROM user WHERE username=? OR email=?;";
 		$get_pwd = $link->prepare($getPwdSQL);
-		$get_pwd->bind_param("s", $username);
+		$get_pwd->bind_param("ss", $user, $user);
 		$get_pwd->execute();
-		$get_pwd->bind_result($user_id, $firstname, $lastname, $email, $authentication, $verified, $ut_id);
+		$get_pwd->bind_result($user_id, $firstname, $lastname, $username, $email, $authentication, $verified, $ut_id);
 		
 		if ($get_pwd->fetch() && password_verify($password, $authentication)) {
 			$_SESSION = array();
@@ -275,7 +275,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 					<form method="POST" autocomplete="off" action="index.php">
 						<div class="mb-3">
 							<label class="form-label" for="username">Username</label>
-							<input type="text" id="username" name="username" class="form-control <?php if (!empty($username_err)) echo 'is-invalid'; ?>" placeholder="Username" autocomplete="off" required>
+							<input type="text" id="username" name="user" class="form-control <?php if (!empty($username_err)) echo 'is-invalid'; ?>" placeholder="Username / Email" autocomplete="off" required>
 							<span class="invalid-feedback"><?php if (!empty($username_err)) echo $username_err; ?></span>
 						</div>
 						<div class="mb-3">

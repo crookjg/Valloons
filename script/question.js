@@ -192,7 +192,7 @@ Quiz.Question.prototype = {
 		container.body.onWorldBounds = true;
 		// set gravity rate so each balloon falls at a different pace
 		// container.body.setGravity(3 * Math.random() + 1);
-		container.body.setGravityY(3);
+		container.body.setGravityY(2.5);
 
 		return container;
 	},
