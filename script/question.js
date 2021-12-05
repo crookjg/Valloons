@@ -16,12 +16,16 @@ var scoreTxt;
 var ansTxtX;
 var ansTxtY;
 var that;
+var startY;
+var yintvl;
 
 Quiz.Question.prototype = {
 	init: function(currQIndex) {
 		ansTxtX = this.cameras.main.centerX;
 		ansTxtY = this.cameras.main.centerY;
 		that = this;
+		startY = -75;
+		yintvl = -150;
 	},
 	preload: function() {
 		// load questions from registry
@@ -76,16 +80,6 @@ Quiz.Question.prototype = {
 			if (this.data.questions[this.registry.get('currQIndex')].choices[i].active == 1) {
 				var choice = this.createAnswer(i);
 				var balloon = balloons.add(choice);	// add container to balloons group
-			}
-		}
-
-		// make it so each balloon drops every 500ms so that no two balloons are right on top of one another
-		let lastDrop = 500 * this.numAns;
-		let ball = 0;
-		for (let dropTime = 0; dropTime < lastDrop; dropTime++) {
-			if (dropTime % 500 == 0) {
-				balloon[ball].setGravityY(3);
-				ball++;
 			}
 		}
 
@@ -171,9 +165,9 @@ Quiz.Question.prototype = {
 		let max = 840;	// max (game width - balloon width w/ padding)
 		let min = 20;	// min (0 + balloon width w/ padding
 		var randX = Math.floor(Math.random() * max + min);	// random x
-		var randY = (Math.floor(Math.random() * 150 + 50) * -1);	// random y
+		var y = startY * index + yintvl;	// random y
 	
-		var container = this.add.container(randX, randY);	// create container at random (x, y)
+		var container = this.add.container(randX, y);	// create container at random (x, y)
 		var color = this.balloons[Math.floor(Math.random() * this.numBalloons)]; 	// choose random balloon color from 4 possibilities
 
 		var balloon = this.add.image(43.5, 20, color);
@@ -198,7 +192,7 @@ Quiz.Question.prototype = {
 		container.body.onWorldBounds = true;
 		// set gravity rate so each balloon falls at a different pace
 		// container.body.setGravity(3 * Math.random() + 1);
-//		container.body.setGravityY(3);
+		container.body.setGravityY(3);
 
 		return container;
 	},
