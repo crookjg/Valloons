@@ -8,8 +8,6 @@ $login_err = $reg_err = "";
 
 if ($_SESSION['loggedin'] == true)
 	header("location: dashboard.php");
-else
-	header("location: index.php");
 
 if (!empty($_POST['login']) && isset($_POST['login'])) {
 	$username = $password = NULL;

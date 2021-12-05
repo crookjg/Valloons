@@ -79,6 +79,16 @@ Quiz.Question.prototype = {
 			}
 		}
 
+		// make it so each balloon drops every 500ms so that no two balloons are right on top of one another
+		let lastDrop = 500 * this.numAns;
+		let ball = 0;
+		for (let dropTime = 0; dropTime < lastDrop; dropTime++) {
+			if (dropTime % 500 == 0) {
+				balloon[ball].setGravityY(3);
+				ball++;
+			}
+		}
+
 		// collide the balloon with the world bound
  		this.physics.world.on('worldbounds', this.groundHit);
 	},
@@ -187,7 +197,8 @@ Quiz.Question.prototype = {
 		container.body.setCollideWorldBounds(true);
 		container.body.onWorldBounds = true;
 		// set gravity rate so each balloon falls at a different pace
-		container.body.setGravityY(3 * Math.random() + 1);
+		// container.body.setGravity(3 * Math.random() + 1);
+//		container.body.setGravityY(3);
 
 		return container;
 	},
