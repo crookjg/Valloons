@@ -4,6 +4,9 @@ session_start();
 
 include('config.php');
 
+if ($_SESSION['loggedin'] != true)
+	header("location: index.php");
+
 $gameID = $gameName = $topic = $teacherID = $dateCreated = $published = NULL;
 $game_err = $q_err = $a_err = $post_err = $post_sucs = NULL;
 
@@ -205,7 +208,7 @@ if (isset($_POST['add-question']) && !empty($_POST['add-question'])) {
 		$q_active = 0;
 	}
 
-	$addQuestion = "INSERT INTO question(game_id, question, active) VALUES (?, ?, ?, ?);";
+	$addQuestion = "INSERT INTO question(game_id, question, active) VALUES (?, ?, ?);";
 	if (isset($gameID) && isset($question) && isset($q_active) && empty($post_err) && empty($q_err)) {
 		if ($aQ = mysqli_prepare($link, $addQuestion)) {
 			$aQ->bind_param("isi", $gameID, $question, $q_active);

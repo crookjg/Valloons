@@ -117,10 +117,10 @@ nav a {
 	color: white !important;
 	text-decoration: none;
 }
-#pill-link-one {
+#pill-link-one, #register-one {
 	border-radius: 5px 0 0 5px;
 }
-#pill-link-two {
+#pill-link-two, #register-two {
 	border-radius: 0 5px 5px 0;
 }
 .login-form {
@@ -141,6 +141,12 @@ nav a {
 }
 .show-feedback {
 	display: block !important;
+}
+#student-register-btn {
+	margin-top: 2em;
+}
+#register-pills {
+	margin-top: 1em;
 }
 
 /*** Profile ***/

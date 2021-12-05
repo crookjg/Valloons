@@ -4,6 +4,9 @@ session_start();
 
 include 'config.php';
 
+if ($_SESSION['loggedin'] != true)
+	header("location: index.php");
+
 $firstname = $_SESSION['first_name'];
 $lastname = $_SESSION['last_name'];
 $uname = $_SESSION['username'];

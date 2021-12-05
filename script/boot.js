@@ -16,13 +16,13 @@ Quiz.Boot.prototype = {
 		this.load.image('pink', '/media/PinkBalloon.png');
 		this.load.image('dart', '/media/CartoonDart.png');
 		this.load.audio('pop', ['/media/balloonPop.wav']);
+		this.load.audio('ding', ['/media/ding.wav']);
 		
 		this.balloons = ['red', 'blue', 'green', 'pink'];
 		this.num_balloons = 4;
 
 		this.registry.set('currQIndex', this.currQIndex);
 		this.registry.set('score', this.score);
-		this.registry.set('totalAnswers', 0);
 		this.registry.set('balloons', this.balloons);
 		this.registry.set('num_balloons', this.num_balloons);
 
@@ -50,9 +50,11 @@ Quiz.Boot.prototype = {
 		this.registry.set('questions', gameData);
 	},
 	create: function() {
-		// add popping sound to registry
+		// add popping & ding sound to registry
 		this.popSound = this.sound.add('pop', {loop: false} );
 		this.registry.set('popSound', this.popSound);
+		this.dingSound = this.sound.add('ding', {loop: false} );
+		this.registry.set('dingSound', this.dingSound);
 
 		// start directions scene
 		this.scene.start('directions');
