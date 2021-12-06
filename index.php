@@ -63,50 +63,50 @@ if (!empty($_POST['login']) && isset($_POST['login'])) {
 }
 
 if (!empty($_POST['register-student']) && isset($_POST['register-student'])) {
-	$firstname = $lastname = $uname = $student_email = $password = $verified = $usertype = NULL;
-	$firstname_err = $lastname_err = $uname_err = $email_err = $pwd_err = $usertype_err = "";
+	$stufname = $stulname = $stuuname = $student_email = $stu_password = $stu_usertype = NULL;
+	$stufname_err = $stulname_err = $stuuname_err = $stu_email_err = $stu_pwd_err = $stu_usertype_err = "";
 
 	if (!empty($_POST['first-name']) && isset($_POST['first-name'])) {
-		$firstname = mysqli_real_escape_string($link, $_POST['first-name']);
+		$stufname = mysqli_real_escape_string($link, $_POST['first-name']);
 	} else {
-		$firstname_err = "Please enter your first name.";
+		$stufname_err = "Please enter your first name.";
 	}
 
 	if (!empty($_POST['last-name']) && isset($_POST['last-name'])) {
-		$lastname = mysqli_real_escape_string($link, $_POST['last-name']);
+		$stulname = mysqli_real_escape_string($link, $_POST['last-name']);
 	} else {
-		$lastname_err = "Please enter your last name.";
+		$stulname_err = "Please enter your last name.";
 	}
 
 	if (!empty($_POST['username']) && isset($_POST['username'])) {
-		$uname = mysqli_real_escape_string($link, $_POST['username']);
+		$stuuname = mysqli_real_escape_string($link, $_POST['username']);
 	} else {
-		$uname_err = "Please enter a username.";
+		$stuuname_err = "Please enter a username.";
 	}
 
 	if (!empty($_POST['email']) && isset($_POST['email'])) {
 		$student_email = mysqli_real_escape_string($link, $_POST['email']);
 	} else {
-		$email_err = "Please enter a valid school email address.";
+		$stu_email_err = "Please enter a valid school email address.";
 	}
 
 	if (!empty($_POST['password']) && isset($_POST['password'])) {
-		$password = mysqli_real_escape_string($link, $_POST['password']);
-		$auth_string = password_hash($password, PASSWORD_BCRYPT);
+		$stu_password = mysqli_real_escape_string($link, $_POST['password']);
+		$auth_string = password_hash($stu_password, PASSWORD_BCRYPT);
 	} else {
-		$pwd_err = "Please enter a password. Passwords must contain at least 8 characters, including 1 number and 1 special character.";
+		$stu_pwd_err = "Please enter a password. Passwords must contain at least 8 characters, including 1 number and 1 special character.";
 	}
 
 	// usertype is student, url is NULL
-	$usertype = 3;
+	$stu_usertype = 3;
 	$url = NULL;
 
-	if (!empty($firstname) && !empty($lastname) && !empty($uname) && !empty($student_email) && !empty($password) && !empty($usertype)) {
+	if (!empty($stufname) && !empty($stulname) && !empty($stuuname) && !empty($student_email) && !empty($stu_password) && !empty($stu_usertype)) {
 		$register_sql = "INSERT INTO user (first_name, last_name, email, username, authentication, teacher_url, ut_id) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		if ($registration = mysqli_prepare($link, $register_sql)) {
-			$registration->bind_param("ssssssi", $firstname, $lastname, $student_email, $uname, $auth_string, $url, $usertype);
+			$registration->bind_param("ssssssi", $stufname, $stulname, $student_email, $stuuname, $auth_string, $url, $stu_usertype);
 			if (mysqli_stmt_execute($registration)) {
-				$mail_sent = send_verification_email($student_email, $firstname, $lastname, $uname, $password);
+				$mail_sent = send_verification_email($student_email, $stufname, $stulname, $stuuname, $stu_password);
 				if ($mail_sent) {
 					$login_err = "Registration complete. Login and verify your email address.";
 				} else {
@@ -126,10 +126,10 @@ if (!empty($_POST['register-student']) && isset($_POST['register-student'])) {
 					}
 				}
 
-				if (in_array($email, $info['emails'])) {
-					$email_err = "The email address is already taken.";
+				if (in_array($student_email, $info['emails'])) {
+					$stu_email_err = "The email address is already taken.";
 				} else if (in_array($uname, $info['users'])) {
-					$uname_err = "The username is taken.";
+					$stuuname_err = "The username is taken.";
 				}		
 			}
 		} else {
@@ -209,7 +209,7 @@ if (!empty($_POST['register-teacher']) && isset($_POST['register-teacher'])) {
 					}
 				}
 
-				if (in_array($email, $info['emails'])) {
+				if (in_array($teacher_email, $info['emails'])) {
 					$email_err = "The email address is already taken.";
 				} else if (in_array($uname, $info['users'])) {
 					$uname_err = "The username is taken.";
@@ -261,8 +261,8 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 	<div class="container ex-space">
 		<div class="center-pills">
 			<ul class="nav nav-pills">
-			<li class="pill-item"><a class="pill-link <?php if (empty($reg_err) && empty($firstname_err) && empty($lastname_err) && empty($uname_err) && empty($pwd_err) && empty($ut_err)) echo 'active'; ?>" id="pill-link-one" data-bs-toggle="pill" href="#login">Login</a></li>
-			<li class="pill-item"><a class="pill-link <?php if (!empty($reg_err) || !empty($firstname_err) || !empty($lastname_err) || !empty($uname_err) || !empty($pwd_err) || !empty($ut_err)) echo 'active'; ?>" id="pill-link-two" data-bs-toggle="pill" href="#register">Register</a></li>
+			<li class="pill-item"><a class="pill-link <?php if (empty($reg_err) && empty($firstname_err) && empty($lastname_err) && empty($uname_err) && empty($pwd_err)) echo 'active'; ?>" id="pill-link-one" data-bs-toggle="pill" href="#login">Login</a></li>
+			<li class="pill-item"><a class="pill-link <?php if (!empty($reg_err) || !empty($firstname_err) || !empty($lastname_err) || !empty($uname_err) || !empty($pwd_err)) echo 'active'; ?>" id="pill-link-two" data-bs-toggle="pill" href="#register">Register</a></li>
 			</ul>
 		</div>
 		<div class="tab-content">
@@ -274,7 +274,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 					<h4 class="center-align">Login</h4>
 					<form method="POST" autocomplete="off" action="index.php">
 						<div class="mb-3">
-							<label class="form-label" for="username">Username</label>
+							<label class="form-label" for="username">Username or Email Address</label>
 							<input type="text" id="username" name="user" class="form-control <?php if (!empty($username_err)) echo 'is-invalid'; ?>" placeholder="Username / Email" autocomplete="off" required>
 							<span class="invalid-feedback"><?php if (!empty($username_err)) echo $username_err; ?></span>
 						</div>
@@ -289,7 +289,8 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 					</form>
 				</div>
 			</div>
-			<div class="row tab-pane <?php if (!empty($reg_err) || !empty($firstname_err) || !empty($lastname_err) || !empty($uname_err) || !empty($pwd_err) || !empty($ut_err)) echo 'active'; ?>" id="register">
+			<div class="row tab-pane <?php if (!empty($reg_err) || !empty($firstname_err) || !empty($lastname_err) || !empty($uname_err) || !empty($email_err) || !empty($pwd_err) || !empty($stufname_err) 
+				|| !empty($stulname_err) || !empty($stuuname_err) || !empty($stu_email_err) || !empty($stu_pwd_err)) echo 'active'; ?>" id="register">
 				<div class="center-align">
 					<span class="feedback <?php if (!empty($reg_err)) echo 'needed-feedback'; ?>"><?php if (!empty($reg_err)) echo $reg_err; ?></span>
 				</div>
@@ -297,43 +298,47 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 					<h4 class="center-align">Register</h4>
 					<div class="center-pills" id="register-pills">
 						<ul class="nav nav-pills">
-							<li class="pill-item"><a class="pill-link active" id="register-one" data-bs-toggle="pill" href="#student-register">Student</a></li>
-							<li class="pill-item"><a class="pill-link" id="register-two" data-bs-toggle="pill" href="#teacher-register">Teacher</a></li>
+						<li class="pill-item"><a class="pill-link <?php if (empty($reg_err) || (!empty($reg_err) && (!empty($stufname_err) || !empty($stulname_err) || !empty($stuuname_err) 
+							|| !empty($stu_email_err) || !empty($stu_pwd_err)))) echo 'active'; ?>" id="register-one" data-bs-toggle="pill" href="#student-register">Student</a></li>
+						<li class="pill-item"><a class="pill-link <?php if (!empty($reg_err) && (!empty($firstname_err) || !empty($lastname_err) || !empty($uname_err) || !empty($email_err) 
+							|| !empty($pwd_err))) echo 'active'; ?>" id="register-two" data-bs-toggle="pill" href="#teacher-register">Teacher</a></li>
 						</ul>
 					</div>
 					<div class="tab-content">
-						<div class="row tab-pane active" id="student-register">
+					<div class="row tab-pane <?php if (empty($reg_err) || (!empty($stufname_err) || !empty($stulname_err) || !empty($stuuname_err) || !empty($stu_email_err) || !empty($stu_pwd_err))) echo 'active'; ?>" id="student-register">
 							<form method="POST" autocomplete="off" action="index.php">
 								<div class="row mb-3">
 									<div class="col-sm">
 										<label class="form-label" for="first-name">First Name</label>
-										<input type="text" id="first-name" name="first-name" class="form-control <?php if (!empty($firstname_err)) echo 'is-invalid'; ?>" placeholder="First Name" autocomplete="off" value="<?php echo $firstname; ?>" required>
-										<span class="invalid-feedback"><?php if (!empty($firstname_err)) echo $firstname_err; ?></span>
+										<input type="text" id="first-name" name="first-name" class="form-control <?php if (!empty($stufname_err)) echo 'is-invalid'; ?>" placeholder="First Name" autocomplete="off" value="<?php echo $stufname; ?>" required>
+										<span class="invalid-feedback"><?php if (!empty($stufname_err)) echo $stufname_err; ?></span>
 									</div>
 									<div class="col-sm">
 										<label class="form-label" for="last-name">Last Name</label>
-										<input type="text" id="last-name" name="last-name" class="form-control <?php if (!empty($lastname_err)) echo 'is-invalid'; ?>" placeholder="Last Name" autocomplete="off" value="<?php echo $lastname; ?>" required>
-										<span class="invalid-feedback"><?php if (!empty($lastname_err)) echo $lastname_err; ?></span>
+										<input type="text" id="last-name" name="last-name" class="form-control <?php if (!empty($stulname_err)) echo 'is-invalid'; ?>" placeholder="Last Name" autocomplete="off" value="<?php echo $stulname; ?>" required>
+										<span class="invalid-feedback"><?php if (!empty($stulname_err)) echo $stulname_err; ?></span>
 									</div>
 								</div>
 								<div class="row mb-3">
 									<div class="col-sm">
 										<label class="form-label" for="username">Username</label>
-										<input type="text" id="username" name="username" class="form-control <?php if (!empty($uname_err)) echo 'is-invalid'; ?>" placeholder="Username" autocomplete="off" value="<?php echo $uname; ?>" required>
-										<span class="invalid-feedback"><?php if (!empty($uname_err)) echo $uname_err; ?></span>
+										<input type="text" id="username" name="username" class="form-control <?php if (!empty($stuuname_err)) echo 'is-invalid'; ?>" placeholder="Username" autocomplete="off" value="<?php echo $stuuname; ?>" required>
+										<span class="invalid-feedback"><?php if (!empty($stuuname_err)) echo $stuuname_err; ?></span>
 									</div>
 									<div class="col-sm" id="student-email">
 										<label class="form-label" for="email">Email</label>
 										<input type="email" id="stu-email" name="email" class="form-control <?php if (!empty($stu_email_err)) echo 'is-invalid'; ?>" placeholder="Email Address" autocomplete="off" value="<?php echo $student_email; ?>" required>
-										<span class="invalid-feedback"><?php if (!empty($email_err)) echo $email_err; ?></span>
+										<span class="invalid-feedback"><?php if (!empty($stu_email_err)) echo $stu_email_err; ?></span>
 									</div>
 								</div>
 								<div class="row mb-3">
 									<div class="col-sm">
 										<label class="form-label" for="password">Password</label>
-										<input type="password" id="password" name="password" class="form-control <?php if (!empty($password_err)) echo 'is-invalid'; ?>" placeholder="password" autocomplete="off" 
-									pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" oninvalid="this.setCustomValidity('Please enter a password containing each of the following: at least one letter, one number, and one special character.')" required>
-										<span class="invalid-feedback"><?php if (!empty($password_err)) echo $password_err; ?></span>
+										<input type="password" id="password" name="password" class="form-control <?php if (!empty($stu_password_err)) echo 'is-invalid'; ?>" placeholder="password" 
+											autocomplete="off" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" 
+											oninvalid="this.setCustomValidity('Please enter a password containing each of the following: at least one letter, one number, and one special character.')" 
+										required>
+										<span class="invalid-feedback"><?php if (!empty($stu_password_err)) echo $stu_password_err; ?></span>
 									</div>
 									<div class="col-sm btn-center">
 										<input type="submit" class="btn btn-primary" id="student-register-btn" name="register-student" value="Register">
@@ -341,7 +346,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 								</div>
 							</form>
 						</div>
-						<div class="row tab-pane" id="teacher-register">
+						<div class="row tab-pane <?php if (!empty($reg_err) && (!empty($firstname_err) || !empty($lastname_err) || !empty($uname_err) || !empty($pwd_err))) echo 'active'; ?>" id="teacher-register">
 							<form method="POST" autocomplete="off" action="index.php">
 								<div class="row mb-3">
 									<div class="col-sm">
@@ -363,7 +368,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 									</div>
 									<div class="col-sm" id="teacher-email">
 										<label class="form-label" for="email">Email</label>
-										<input type="email" id="tea-email" name="email" class="form-control <?php if (!empty($stu_email_err)) echo 'is-invalid'; ?>" placeholder="Email Address" autocomplete="off" pattern=".+@.+\.edu$" value="<?php echo $teacher_email; ?>" oninvalid="this.setCustomValidity('Please enter a school email ending in .edu.')" required>
+										<input type="email" id="tea-email" name="email" class="form-control <?php if (!empty($email_err)) echo 'is-invalid'; ?>" placeholder="Email Address" autocomplete="off" pattern=".+@.+\.edu$" value="<?php echo $teacher_email; ?>" oninvalid="this.setCustomValidity('Please enter a school email ending in .edu.')" required>
 										<span class="invalid-feedback"><?php if (!empty($email_err)) echo $email_err; ?></span>
 									</div>
 								</div>

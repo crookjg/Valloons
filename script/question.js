@@ -18,6 +18,7 @@ var ansTxtY;
 var that;
 var startY;
 var yintvl;
+var blnIdx;
 
 Quiz.Question.prototype = {
 	init: function(currQIndex) {
@@ -25,7 +26,8 @@ Quiz.Question.prototype = {
 		ansTxtY = this.cameras.main.centerY;
 		that = this;
 		startY = -75;
-		yintvl = -150;
+		yintvl = -100;
+		blnIdx = 0;
 	},
 	preload: function() {
 		// load questions from registry
@@ -75,10 +77,22 @@ Quiz.Question.prototype = {
 		dartTime = this.time.now + 300;
 
 		// create balloons with answers
+		let arrAns = [];
 		for (let i = 0; i < this.numAns; i++) {
+			// get random index from answer
+			let aIdx = Math.floor(Math.random() * this.numAns);
+			if (!arrAns.includes(aIdx)) {
+				arrAns.push(aIdx);
+			} else {
+				while (arrAns.includes(aIdx)) {
+					aIdx = Math.floor(Math.random() * this.numAns);
+				}
+				arrAns.push(aIdx);
+			}
+			console.log(aIdx);
 			// create answer container & return it here if it's active
-			if (this.data.questions[this.registry.get('currQIndex')].choices[i].active == 1) {
-				var choice = this.createAnswer(i);
+			if (this.data.questions[this.registry.get('currQIndex')].choices[aIdx].active == 1) {
+				var choice = this.createAnswer(aIdx);
 				var balloon = balloons.add(choice);	// add container to balloons group
 			}
 		}
@@ -92,9 +106,9 @@ Quiz.Question.prototype = {
 
 		// capture player movement
 		if (cursors.left.isDown) {
-			player.setVelocityX(-175);
+			player.setVelocityX(-200);
 		} else if (cursors.right.isDown) {
-			player.setVelocityX(175);
+			player.setVelocityX(200);
 		} else {
 			player.setVelocityX(0);
 		}
@@ -165,7 +179,8 @@ Quiz.Question.prototype = {
 		let max = 840;	// max (game width - balloon width w/ padding)
 		let min = 20;	// min (0 + balloon width w/ padding
 		var randX = Math.floor(Math.random() * max + min);	// random x
-		var y = startY * index + yintvl;	// random y
+		var y = yintvl * blnIdx + startY;	// random y
+		blnIdx++;
 	
 		var container = this.add.container(randX, y);	// create container at random (x, y)
 		var color = this.balloons[Math.floor(Math.random() * this.numBalloons)]; 	// choose random balloon color from 4 possibilities
@@ -313,4 +328,5 @@ Quiz.Question.prototype = {
 			this.scene.start('question');
 	}
 }
+
 
