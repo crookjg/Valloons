@@ -106,9 +106,9 @@ Quiz.Question.prototype = {
 
 		// capture player movement
 		if (cursors.left.isDown) {
-			player.setVelocityX(-200);
+			player.setVelocityX(-250);
 		} else if (cursors.right.isDown) {
-			player.setVelocityX(200);
+			player.setVelocityX(250);
 		} else {
 			player.setVelocityX(0);
 		}
