@@ -84,7 +84,7 @@ if (!empty($_POST['register-student']) && isset($_POST['register-student'])) {
 		$stuuname_err = "Please enter a username.";
 	}
 
-	if (!empty($_POST['email']) && isset($_POST['email'])) {
+	if (!empty($_POST['email']) && isset($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 		$student_email = mysqli_real_escape_string($link, $_POST['email']);
 	} else {
 		$stu_email_err = "Please enter a valid school email address.";
@@ -162,7 +162,7 @@ if (!empty($_POST['register-teacher']) && isset($_POST['register-teacher'])) {
 		$uname_err = "Please enter a username.";
 	}
 
-	if (!empty($_POST['email']) && isset($_POST['email'])) {
+	if (!empty($_POST['email']) && isset($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 		$teacher_email = mysqli_real_escape_string($link, $_POST['email']);
 	} else {
 		$email_err = "Please enter a valid school email address.";
