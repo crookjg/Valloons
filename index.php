@@ -101,7 +101,7 @@ if (!empty($_POST['register-student']) && isset($_POST['register-student'])) {
 	$stu_usertype = 3;
 	$url = NULL;
 
-	if (!empty($stufname) && !empty($stulname) && !empty($stuuname) && !empty($student_email) && !empty($stu_password) && !empty($stu_usertype)) {
+	if (!empty($stufname) && !empty($stulname) && !empty($stuuname) && !empty($student_email) && !empty($stu_password) && !empty($stu_usertype) && empty($_POST['no-entry']) && !isset($_POST['no-entry'])) {
 		$register_sql = "INSERT INTO user (first_name, last_name, email, username, authentication, teacher_url, ut_id) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		if ($registration = mysqli_prepare($link, $register_sql)) {
 			$registration->bind_param("ssssssi", $stufname, $stulname, $student_email, $stuuname, $auth_string, $url, $stu_usertype);
@@ -184,7 +184,7 @@ if (!empty($_POST['register-teacher']) && isset($_POST['register-teacher'])) {
 	// usertype is teacher
 	$usertype = 2;
 
-	if (!empty($firstname) && !empty($lastname) && !empty($uname) && !empty($teacher_email) && !empty($password) && !empty($usertype)) {
+	if (!empty($firstname) && !empty($lastname) && !empty($uname) && !empty($teacher_email) && !empty($password) && !empty($usertype) && empty($_POST['no-entry']) && !isset($_POST['no-entry'])) {
 		$register_sql = "INSERT INTO user (first_name, last_name, email, username, authentication, teacher_url, ut_id) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		if ($registration = mysqli_prepare($link, $register_sql)) {
 			$registration->bind_param("ssssssi", $firstname, $lastname, $teacher_email, $uname, $auth_string, $url, $usertype);
@@ -341,6 +341,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 										<span class="invalid-feedback"><?php if (!empty($stu_password_err)) echo $stu_password_err; ?></span>
 									</div>
 									<div class="col-sm btn-center">
+										<input type="hidden" name="no-entry">
 										<input type="submit" class="btn btn-primary" id="student-register-btn" name="register-student" value="Register">
 									</div>
 								</div>
@@ -387,6 +388,7 @@ http://99.182.224.179/verify.php?email=' . $email . '&hash=' . $hash . '
 								</div>
 								<div class="row mb-3">
 									<div class="col-sm btn-center">
+										<input type="hidden" name="no-entry">
 										<input type="submit" class="btn btn-primary" id="teacher-register-btn" name="register-teacher" value="Register">
 									</div>
 								</div>
